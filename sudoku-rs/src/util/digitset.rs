@@ -54,6 +54,9 @@ impl DigitSet {
     }
 
     pub fn remove(&mut self, v: u8) {
+        if !self.contains(v) {
+            return;
+        }
         self.0 ^= (1_u16 << (v - 1)) & DIGIT_ALL;
     }
 
@@ -132,5 +135,21 @@ mod test {
     pub fn test_new_full() {
         let full_set = DigitSet::new_full();
         assert_eq!(full_set.values(), vec![1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    }
+    #[test]
+    pub fn test_remove_empty() {
+        let mut set = DigitSet::new_empty();
+        set.remove(1);
+        assert!(set.is_empty());
+    }
+
+    #[test]
+    pub fn test_add_duplicate() {
+        let mut set = DigitSet::new_empty();
+        set.add(1);
+        set.add(1);
+        let mut expected = DigitSet::new_empty();
+        expected.add(1);
+        assert_eq!(set, expected);
     }
 }
