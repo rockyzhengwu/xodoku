@@ -1,5 +1,5 @@
 use crate::{
-    candidate::Candidate,
+    candidate::{self, Candidate},
     error::{Result, SudokuError},
     grid_constant::{get_cell_buddies, get_cell_house, get_house_cell_set},
     util::{digitset::DigitSet, indexset::IndexSet},
@@ -85,6 +85,10 @@ impl Grid {
 
     pub fn set_value_with_candidate(&mut self, candidate: &Candidate) {
         self.set_value(candidate.cell(), candidate.value(), false);
+    }
+
+    pub fn remvoe_candidate(&mut self, candidate: Candidate) {
+        self.pential_values[candidate.cell() as usize].remove(candidate.value());
     }
 
     pub fn set_value(&mut self, cell: u8, value: u8, is_given: bool) -> bool {
