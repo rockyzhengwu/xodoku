@@ -7,7 +7,7 @@ use crate::{
         chain::{
             aic_type1::AicType1, aic_type2::AicType2, continuous_nice_loop::ContinuousNiceLoop,
             discontinuous_nice_loop::DiscontinuousNiceLoop, remote_pair::RemotePair,
-            x_chain::XChain,
+            x_chain::XChain, xy_chain::XYChain,
         },
         empty_rectangle::EmptyRectangle,
         fish::Fish,
@@ -65,6 +65,7 @@ pub enum Step {
     ContinuousNiceLoop(ContinuousNiceLoop),
     RemotePair(RemotePair),
     XChain(XChain),
+    XYChain(XYChain),
 }
 
 impl Step {

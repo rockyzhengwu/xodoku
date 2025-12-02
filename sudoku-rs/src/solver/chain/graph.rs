@@ -1,8 +1,10 @@
 use std::collections::HashMap;
 
 use crate::{
-    candidate::Candidate, grid::Grid, grid_constant::get_cell_buddies,
-    grid_constant::get_cell_house, solver::chain::link::LinkType,
+    candidate::Candidate,
+    grid::Grid,
+    grid_constant::{get_cell_buddies, get_cell_house},
+    solver::chain::{continuous_nice_loop, link::LinkType},
 };
 
 #[derive(Debug, PartialEq)]
@@ -17,6 +19,64 @@ pub struct Graph {
 }
 
 impl Graph {
+    pub fn new_xy_chain_graph(grid: &Grid) -> Self {
+        let mut graph = Graph::default();
+        for cell in 0..81 {
+            let cell_candidate = grid.get_cell_candidate(cell);
+            if cell_candidate.count() != 2 {
+                continue;
+            }
+            // link in cell
+            for v1 in cell_candidate.iter() {
+                for v2 in cell_candidate.iter() {
+                    if v1 == v2 {
+                        continue;
+                    }
+                    graph.add_link(
+                        Candidate::new(cell, v1),
+                        Candidate::new(cell, v2),
+                        LinkType::Strong,
+                    );
+                }
+            }
+            let houses = get_cell_house(cell);
+            for v in cell_candidate.iter() {
+                for h in houses.iter() {
+                    let cand_cells = grid.pential_cells_in_house(*h, v);
+                    if cand_cells.count() == 2 {
+                        for end in cand_cells.iter() {
+                            if end == cell {
+                                continue;
+                            }
+                            if grid.get_cell_candidate(end).count() != 2 {
+                                continue;
+                            }
+                            graph.add_link(
+                                Candidate::new(cell, v),
+                                Candidate::new(end, v),
+                                LinkType::Strong,
+                            );
+                        }
+                    } else {
+                        for end in cand_cells.iter() {
+                            if end == cell {
+                                continue;
+                            }
+                            if grid.get_cell_candidate(end).count() != 2 {
+                                continue;
+                            }
+                            graph.add_link(
+                                Candidate::new(cell, v),
+                                Candidate::new(end, v),
+                                LinkType::Weak,
+                            );
+                        }
+                    }
+                }
+            }
+        }
+        graph
+    }
     pub fn new_x_chain_graph(grid: &Grid, x: u8) -> Self {
         let mut graph = Graph::default();
         for cell in 0..81 {
@@ -127,6 +187,11 @@ impl Graph {
     }
     pub fn add_link(&mut self, start: Candidate, end: Candidate, link_type: LinkType) {
         let edge_info = EdgeInfo { end, link_type };
+        if self.edges.contains_key(&start) {
+            if self.edges[&start].contains(&edge_info) {
+                return;
+            }
+        }
         self.edges.entry(start).or_default().push(edge_info);
     }
 }
