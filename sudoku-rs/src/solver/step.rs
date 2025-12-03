@@ -16,8 +16,8 @@ use crate::{
         hidden_set::HiddenSet,
         hidden_single::HiddenSingle,
         locked_candidate::LockedCandidate,
-        nacked_set::NackedSet,
-        nacked_single::NackedSingle,
+        naked_set::NakedSet,
+        naked_single::NakedSingle,
         skyscraper::Skyscraper,
         sue_de_coq::SueDeCoq,
         two_string_kit::TwoStringKit,
@@ -37,11 +37,11 @@ pub enum Step {
     #[default]
     Nothing,
     FullHouse(FullHouse),
-    NackedSingle(NackedSingle),
+    NakedSingle(NakedSingle),
     HiddenSingle(HiddenSingle),
     LockedCandidate(LockedCandidate),
     HiddenSet(HiddenSet),
-    NackedSet(NackedSet),
+    NackedSet(NakedSet),
     Fish(Fish),
     Skyscraper(Skyscraper),
     TwoStringKit(TwoStringKit),
@@ -59,13 +59,13 @@ pub enum Step {
     XYWing(XYWing),
     WWing(WWing),
     SueDeCoq(SueDeCoq),
+    RemotePair(RemotePair),
+    XChain(XChain),
+    XYChain(XYChain),
     AicType1(AicType1),
     AicType2(AicType2),
     DisContinuousNiceLoop(DiscontinuousNiceLoop),
     ContinuousNiceLoop(ContinuousNiceLoop),
-    RemotePair(RemotePair),
-    XChain(XChain),
-    XYChain(XYChain),
 }
 
 impl Step {
@@ -74,13 +74,81 @@ impl Step {
             Step::FullHouse(full_house) => {
                 full_house.apply(grid);
             }
-            Step::NackedSingle(ns) => {
+            Step::NakedSingle(ns) => {
                 ns.apply(grid);
             }
             Step::HiddenSingle(hs) => {
                 hs.apply(grid);
             }
-            _ => {}
+            Step::NackedSet(ns) => {
+                ns.apply(grid);
+            }
+            Step::HiddenSet(hs) => {
+                hs.apply(grid);
+            }
+            Step::LockedCandidate(lc) => {
+                lc.apply(grid);
+            }
+            Step::Fish(fish) => fish.apply(grid),
+            Step::UniqueType1(un) => un.apply(grid),
+            Step::UniqueType2(un) => un.apply(grid),
+            Step::UniqueType3(un) => un.apply(grid),
+            Step::UniqueType4(un) => un.apply(grid),
+            Step::UniqueType5(un) => un.apply(grid),
+            Step::UniqueType6(un) => un.apply(grid),
+            Step::Skyscraper(sky) => sky.apply(grid),
+            Step::EmptyRectangle(er) => er.apply(grid),
+            Step::TwoStringKit(ts) => ts.apply(grid),
+            Step::AvoidableRectangleType1(ar) => ar.apply(grid),
+            Step::AvoidableRectangleType2(ar) => ar.apply(grid),
+            Step::BugPlusOne(bp) => bp.apply(grid),
+            Step::WWing(ww) => ww.apply(grid),
+            Step::XYWing(xyw) => xyw.apply(grid),
+            Step::SueDeCoq(sdc) => sdc.apply(grid),
+            Step::RemotePair(rp) => rp.apply(grid),
+            Step::AicType1(aic) => aic.apply(grid),
+            Step::AicType2(aic) => aic.apply(grid),
+            Step::XChain(xc) => xc.apply(grid),
+            Step::XYChain(xyc) => xyc.apply(grid),
+            Step::DisContinuousNiceLoop(nc) => nc.apply(grid),
+            Step::ContinuousNiceLoop(nc) => nc.apply(grid),
+            Step::HiddenRectangle(hr) => hr.apply(grid),
+            Step::Nothing => {}
+        }
+    }
+    pub fn difficulty(&self) -> u32 {
+        match self {
+            Step::FullHouse(_) => 4,
+            Step::NakedSingle(_) => 4,
+            Step::HiddenSingle(_) => 14,
+            Step::HiddenSet(hs) => hs.difficulty(),
+            Step::LockedCandidate(_) => 50,
+            Step::NackedSet(ns) => ns.difficulty(),
+            Step::Fish(fish) => fish.difficulty(),
+            Step::Skyscraper(_) => 130,
+            Step::TwoStringKit(_) => 150,
+            Step::EmptyRectangle(_) => 120,
+            Step::UniqueType1(_) => 100,
+            Step::UniqueType2(_) => 100,
+            Step::UniqueType3(_) => 100,
+            Step::UniqueType4(_) => 100,
+            Step::UniqueType5(_) => 100,
+            Step::UniqueType6(_) => 100,
+            Step::HiddenRectangle(_) => 100,
+            Step::BugPlusOne(_) => 130,
+            Step::AvoidableRectangleType1(_) => 80,
+            Step::AvoidableRectangleType2(_) => 80,
+            Step::XYWing(_) => 160,
+            Step::WWing(_) => 150,
+            Step::SueDeCoq(_) => 250,
+            Step::XChain(_) => 260,
+            Step::XYChain(_) => 260,
+            Step::RemotePair(_) => 110,
+            Step::ContinuousNiceLoop(_) => 280,
+            Step::DisContinuousNiceLoop(_) => 280,
+            Step::AicType1(_) => 470,
+            Step::AicType2(_) => 470,
+            Step::Nothing => 0,
         }
     }
 }

@@ -1,13 +1,11 @@
-use std::collections::{HashMap, HashSet};
-
-use rand::fill;
+use std::collections::HashSet;
 
 use crate::{
     candidate::Candidate,
     grid::Grid,
     grid_constant::{block, cell_index, col, get_cell_buddies, row},
     solver::{SolverStrategy, step::Step, step_accumulator::StepAccumulator},
-    util::{create_permutations, digitset::DigitSet, indexset::IndexSet},
+    util::{create_permutations, indexset::IndexSet},
 };
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
@@ -15,6 +13,13 @@ pub struct AvoidableRectangleType2 {
     remove_candidates: Vec<Candidate>,
     highlight_candidates: Vec<Candidate>,
     fin_candidates: Vec<Candidate>,
+}
+impl AvoidableRectangleType2 {
+    pub fn apply(&self, grid: &mut Grid) {
+        for cand in self.remove_candidates.iter() {
+            grid.remvoe_candidate(cand);
+        }
+    }
 }
 
 #[derive(Default)]

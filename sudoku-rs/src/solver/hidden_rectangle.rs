@@ -18,6 +18,13 @@ pub struct HiddenRectangle {
     remove_candidates: Vec<Candidate>,
     highlight_candidates: Vec<Candidate>,
 }
+impl HiddenRectangle {
+    pub fn apply(&self, grid: &mut Grid) {
+        for cand in self.remove_candidates.iter() {
+            grid.remvoe_candidate(cand);
+        }
+    }
+}
 
 #[derive(Default)]
 pub struct HiddenRectangleFinder {}

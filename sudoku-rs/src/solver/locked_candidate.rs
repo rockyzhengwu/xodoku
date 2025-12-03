@@ -29,6 +29,15 @@ impl LockedCandidate {
             house,
         }
     }
+    pub fn difficulty(&self) -> u8 {
+        50
+    }
+
+    pub fn apply(&self, grid: &mut Grid) {
+        for cand in self.remove_candidates.iter() {
+            grid.remvoe_candidate(cand);
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Hash, Eq)]

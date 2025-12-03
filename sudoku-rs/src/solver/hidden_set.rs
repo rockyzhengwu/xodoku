@@ -17,6 +17,22 @@ pub struct HiddenSet {
     house: u8,
 }
 
+impl HiddenSet {
+    pub fn difficulty(&self) -> u32 {
+        match self.degree {
+            2 => 70,
+            3 => 100,
+            4 => 120,
+            _ => 0,
+        }
+    }
+    pub fn apply(&self, grid: &mut Grid) {
+        for cand in self.remove_candidates.iter() {
+            grid.remvoe_candidate(cand);
+        }
+    }
+}
+
 pub struct HiddenSetFinder {
     degree: u8,
 }

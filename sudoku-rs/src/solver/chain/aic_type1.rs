@@ -21,6 +21,13 @@ pub struct AicType1 {
     chain: Chain,
     remove_candidates: Vec<Candidate>,
 }
+impl AicType1 {
+    pub fn apply(&self, grid: &mut Grid) {
+        for cand in self.remove_candidates.iter() {
+            grid.remvoe_candidate(cand);
+        }
+    }
+}
 
 #[derive(Default)]
 pub struct AicType1Finder {}

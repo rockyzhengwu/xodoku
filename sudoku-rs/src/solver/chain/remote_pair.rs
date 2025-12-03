@@ -20,6 +20,13 @@ pub struct RemotePair {
     remove_candidates: Vec<Candidate>,
     chain: Chain,
 }
+impl RemotePair {
+    pub fn apply(&self, grid: &mut Grid) {
+        for cand in self.remove_candidates.iter() {
+            grid.remvoe_candidate(cand);
+        }
+    }
+}
 
 #[derive(Default)]
 pub struct RemotePairFinder {}

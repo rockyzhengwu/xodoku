@@ -20,6 +20,14 @@ pub struct XChain {
     chain: Chain,
     remove_candidates: Vec<Candidate>,
 }
+impl XChain {
+    pub fn apply(&self, grid: &mut Grid) {
+        for cand in self.remove_candidates.iter() {
+            grid.remvoe_candidate(cand);
+        }
+    }
+}
+
 impl PartialEq for XChain {
     fn eq(&self, other: &Self) -> bool {
         if self.chain.len() == other.chain.len() {

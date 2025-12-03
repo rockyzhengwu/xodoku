@@ -13,6 +13,13 @@ pub struct AvoidableRectangleType1 {
     remove_candidates: Vec<Candidate>,
     ur_points: Vec<Candidate>,
 }
+impl AvoidableRectangleType1 {
+    pub fn apply(&self, grid: &mut Grid) {
+        for cand in self.remove_candidates.iter() {
+            grid.remvoe_candidate(cand);
+        }
+    }
+}
 
 #[derive(Default)]
 pub struct AvoidableRectangleType1Finder {}

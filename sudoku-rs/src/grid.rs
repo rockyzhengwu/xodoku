@@ -87,7 +87,7 @@ impl Grid {
         self.set_value(candidate.cell(), candidate.value(), false);
     }
 
-    pub fn remvoe_candidate(&mut self, candidate: Candidate) {
+    pub fn remvoe_candidate(&mut self, candidate: &Candidate) {
         self.pential_values[candidate.cell() as usize].remove(candidate.value());
     }
 
@@ -335,6 +335,22 @@ impl Grid {
             .filter(|cell| self.pential_values[*cell as usize].contains(value));
         let set = IndexSet::new_from_values(cells);
         set
+    }
+    pub fn check_grid_valid(&self, solution: &[u8]) -> bool {
+        for (i, v) in self.values.iter().enumerate() {
+            if *v != 0 && &solution[i] != v {
+                return false;
+            }
+        }
+        for (i, cand_set) in self.pential_values.iter().enumerate() {
+            if !cand_set.is_empty() {
+                let expected = solution[i];
+                if !cand_set.contains(expected) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
 

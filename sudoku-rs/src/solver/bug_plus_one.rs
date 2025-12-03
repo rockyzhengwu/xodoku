@@ -12,6 +12,13 @@ pub struct BugPlusOne {
 
 #[derive(Default)]
 pub struct BugPlusOneFinder {}
+impl BugPlusOne {
+    pub fn apply(&self, grid: &mut Grid) {
+        for cand in self.remove_candidates.iter() {
+            grid.remvoe_candidate(cand);
+        }
+    }
+}
 
 impl BugPlusOneFinder {
     pub fn find_hint(&self, grid: &Grid, acc: &mut dyn StepAccumulator) {
@@ -33,6 +40,9 @@ impl BugPlusOneFinder {
             } else {
                 return;
             }
+        }
+        if extra_cell > 81 {
+            return;
         }
         let mut extra_value = 10;
         let extra_houses = [block(extra_cell), row(extra_cell), col(extra_cell)];

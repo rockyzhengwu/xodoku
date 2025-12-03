@@ -16,6 +16,13 @@ pub struct UniqueType2 {
     highlight_candidates: Vec<Candidate>,
     remove_candidates: Vec<Candidate>,
 }
+impl UniqueType2 {
+    pub fn apply(&self, grid: &mut Grid) {
+        for cand in self.remove_candidates.iter() {
+            grid.remvoe_candidate(cand);
+        }
+    }
+}
 
 #[derive(Default)]
 pub struct Unique2Finder {}

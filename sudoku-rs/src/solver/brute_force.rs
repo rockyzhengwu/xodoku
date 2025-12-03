@@ -3,7 +3,7 @@ use rand::Rng;
 use crate::{
     grid::Grid,
     solver::{
-        SolverStrategy, hidden_single::HiddenSingleFinder, nacked_single::NackedSingleFinder,
+        SolverStrategy, hidden_single::HiddenSingleFinder, naked_single::NakedSingleFinder,
         step_accumulator::SingleStepAccumulator,
     },
 };
@@ -59,7 +59,7 @@ impl BruteForceSolver {
 
     fn solve_recursive(&self, mut grid: Grid, reverse: bool) -> Option<Grid> {
         let hidden_single_finder = HiddenSingleFinder::default();
-        let naked_single_finder = NackedSingleFinder::default();
+        let naked_single_finder = NakedSingleFinder::default();
         let finders: Vec<Box<dyn SolverStrategy>> = vec![
             Box::new(hidden_single_finder),
             Box::new(naked_single_finder),

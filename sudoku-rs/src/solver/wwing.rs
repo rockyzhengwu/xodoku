@@ -11,6 +11,13 @@ pub struct WWing {
     highlight_candidates: Vec<Candidate>,
     fin_candidates: Vec<Candidate>,
 }
+impl WWing {
+    pub fn apply(&self, grid: &mut Grid) {
+        for cand in self.remove_candidates.iter() {
+            grid.remvoe_candidate(cand);
+        }
+    }
+}
 
 #[derive(Default)]
 pub struct WWingFinder {}

@@ -16,6 +16,14 @@ pub struct TwoStringKit {
     fin_candidates: Vec<Candidate>,
 }
 
+impl TwoStringKit {
+    pub fn apply(&self, grid: &mut Grid) {
+        for cand in self.remove_candidates.iter() {
+            grid.remvoe_candidate(cand);
+        }
+    }
+}
+
 #[derive(Default)]
 pub struct TwoStringKitFinder {}
 

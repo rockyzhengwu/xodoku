@@ -12,6 +12,14 @@ pub struct XYWing {
     fin_candidates: Vec<Candidate>,
 }
 
+impl XYWing {
+    pub fn apply(&self, grid: &mut Grid) {
+        for cand in self.remove_candidates.iter() {
+            grid.remvoe_candidate(cand);
+        }
+    }
+}
+
 #[derive(Default)]
 pub struct XYWingFinder {}
 
