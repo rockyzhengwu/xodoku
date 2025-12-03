@@ -150,6 +150,9 @@ impl SolverStrategy for NakedSetFinder {
             return;
         }
     }
+    fn name(&self) -> &str {
+        "NakedSetFinder"
+    }
 }
 
 #[cfg(test)]

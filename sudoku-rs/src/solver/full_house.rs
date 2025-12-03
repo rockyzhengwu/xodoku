@@ -49,6 +49,9 @@ impl SolverStrategy for FullHOuseFinder {
             }
         }
     }
+    fn name(&self) -> &str {
+        "FullHouse"
+    }
 }
 
 #[cfg(test)]

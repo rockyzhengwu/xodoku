@@ -105,6 +105,9 @@ impl SolverStrategy for AvoidableRectangleType1Finder {
     fn find_step(&self, grid: &Grid, acc: &mut dyn StepAccumulator) {
         self.find_hint(grid, acc);
     }
+    fn name(&self) -> &str {
+        "AvoidableRectangleType1Finder"
+    }
 }
 
 #[cfg(test)]

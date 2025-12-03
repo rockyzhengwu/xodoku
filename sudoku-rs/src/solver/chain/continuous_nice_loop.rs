@@ -211,6 +211,9 @@ impl SolverStrategy for ContinuousNiceLoopFinder {
     fn find_step(&self, grid: &Grid, acc: &mut dyn StepAccumulator) {
         self.find_continuous_niceloop(grid, acc);
     }
+    fn name(&self) -> &str {
+        "ContinuousNiceLoopFinder"
+    }
 }
 
 #[cfg(test)]

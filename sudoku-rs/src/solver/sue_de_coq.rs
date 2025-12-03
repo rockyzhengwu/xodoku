@@ -145,6 +145,9 @@ impl SolverStrategy for SueDeCoqFinder {
         }
         self.find_hint(grid, acc, HouseType::Column);
     }
+    fn name(&self) -> &str {
+        "SueDeCoqFinder"
+    }
 }
 
 #[cfg(test)]

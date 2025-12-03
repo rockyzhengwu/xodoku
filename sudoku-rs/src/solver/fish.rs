@@ -300,6 +300,9 @@ impl SolverStrategy for FishFinder {
         }
         self.find_fish(HouseType::Column, HouseType::Row, grid, acc);
     }
+    fn name(&self) -> &str {
+        "FishFinder"
+    }
 }
 #[cfg(test)]
 mod test {

@@ -116,6 +116,10 @@ impl SolverStrategy for Unique6Finder {
     fn find_step(&self, grid: &Grid, acc: &mut dyn StepAccumulator) {
         self.find_unique_type4(grid, acc);
     }
+
+    fn name(&self) -> &str {
+        "UniqueType6Finder"
+    }
 }
 
 #[cfg(test)]

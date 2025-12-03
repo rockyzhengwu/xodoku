@@ -121,6 +121,9 @@ impl SolverStrategy for SkyscraperFinder {
         }
         self.find_skyscraper(HouseType::Column, grid, acc);
     }
+    fn name(&self) -> &str {
+        "SkyscraperFinder"
+    }
 }
 
 #[cfg(test)]

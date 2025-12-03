@@ -199,6 +199,9 @@ impl SolverStrategy for EmptyRectangleFinder {
             }
         }
     }
+    fn name(&self) -> &str {
+        "EmptyRectangleFinder"
+    }
 }
 
 #[cfg(test)]

@@ -152,3 +152,11 @@ impl Step {
         }
     }
 }
+
+pub fn difficulty_score(steps: &[Step]) -> u32 {
+    let mut score = 0;
+    for step in steps.iter() {
+        score += step.difficulty()
+    }
+    return score;
+}

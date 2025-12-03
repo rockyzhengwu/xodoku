@@ -114,6 +114,10 @@ impl SolverStrategy for XYWingFinder {
     fn find_step(&self, grid: &Grid, acc: &mut dyn StepAccumulator) {
         self.find_hint(grid, acc);
     }
+
+    fn name(&self) -> &str {
+        "XYWingFinder"
+    }
 }
 
 #[cfg(test)]

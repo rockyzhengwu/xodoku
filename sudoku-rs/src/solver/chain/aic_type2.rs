@@ -144,6 +144,9 @@ impl SolverStrategy for AicType2Finder {
     fn find_step(&self, grid: &Grid, acc: &mut dyn StepAccumulator) {
         self.find_aic_type2(grid, acc);
     }
+    fn name(&self) -> &str {
+        "AicType2Finder"
+    }
 }
 
 #[cfg(test)]

@@ -133,6 +133,9 @@ impl SolverStrategy for HiddenRectangleFinder {
     fn find_step(&self, grid: &Grid, acc: &mut dyn StepAccumulator) {
         self.find_hidden_rectangle(grid, acc);
     }
+    fn name(&self) -> &str {
+        "HiddenRectangleFinder"
+    }
 }
 
 #[cfg(test)]

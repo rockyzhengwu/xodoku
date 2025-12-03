@@ -78,6 +78,9 @@ impl SolverStrategy for Unique1Finder {
     fn find_step(&self, grid: &Grid, acc: &mut dyn StepAccumulator) {
         self.find_unique_type1(grid, acc);
     }
+    fn name(&self) -> &str {
+        "UniqueType1Finder"
+    }
 }
 
 #[cfg(test)]

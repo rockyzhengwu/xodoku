@@ -1,5 +1,5 @@
 use crate::{
-    candidate::{self, Candidate},
+    candidate::Candidate,
     error::{Result, SudokuError},
     grid_constant::{get_cell_buddies, get_cell_house, get_house_cell_set},
     util::{digitset::DigitSet, indexset::IndexSet},
@@ -11,6 +11,7 @@ pub enum HouseType {
     Row,
     Column,
 }
+
 impl HouseType {
     pub fn houses(&self) -> [u8; 9] {
         match self {
@@ -352,6 +353,16 @@ impl Grid {
         }
         return true;
     }
+}
+
+#[derive(Debug)]
+pub enum Difficulty {
+    Easy,
+    Medium,
+    Hard,
+    UnFair,
+    Extreme,
+    INCOMPLETE,
 }
 
 #[cfg(test)]

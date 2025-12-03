@@ -34,6 +34,7 @@ pub mod xywing;
 
 pub trait SolverStrategy {
     fn find_step(&self, grid: &Grid, acc: &mut dyn StepAccumulator);
+    fn name(&self) -> &str;
 }
 
 pub struct SimpleSolver {
@@ -82,21 +83,22 @@ impl SimpleSolver {
             Box::new(fish::FishFinder::new(fish::FishType::SashimiSwordFish)),
             Box::new(fish::FishFinder::new(fish::FishType::FinnedJellFish)),
             Box::new(fish::FishFinder::new(fish::FishType::SashimiJellyFish)),
-            //Box::new(chain::x_chain::XChainFinder::default()),
-            //Box::new(chain::xy_chain::XYChainFinder::default()),
-            //Box::new(chain::discontinuous_nice_loop::DiscontinuousNiceLoopFinder::default()),
-            //Box::new(chain::continuous_nice_loop::ContinuousNiceLoopFinder::default()),
-            //Box::new(chain::aic_type1::AicType1Finder::default()),
-            //Box::new(chain::aic_type2::AicType2Finder::default()),
+            Box::new(chain::x_chain::XChainFinder::default()),
+            Box::new(chain::xy_chain::XYChainFinder::default()),
+            Box::new(chain::discontinuous_nice_loop::DiscontinuousNiceLoopFinder::default()),
+            Box::new(chain::continuous_nice_loop::ContinuousNiceLoopFinder::default()),
+            Box::new(chain::aic_type1::AicType1Finder::default()),
+            Box::new(chain::aic_type2::AicType2Finder::default()),
         ];
         Self { strategies }
     }
     pub fn solve(&self, grid: &mut Grid) -> Vec<step::Step> {
-        let solve_steps = Vec::new();
+        let mut solve_steps = Vec::new();
         loop {
             if grid.is_solved() {
                 return solve_steps;
             }
+            println!("{:?}", grid.to_digit_line());
 
             let mut changed = false;
             for strategy in self.strategies.iter() {
@@ -106,8 +108,11 @@ impl SimpleSolver {
                 if step == &step::Step::Nothing {
                     continue;
                 } else {
+                    println!("strategy:{:?}", strategy.name());
+                    println!("{:?}", step);
                     step.apply(grid);
                     changed = true;
+                    solve_steps.push(step.to_owned());
                     break;
                 }
             }
@@ -121,18 +126,27 @@ impl SimpleSolver {
 
 #[cfg(test)]
 mod test {
-    use crate::{grid::Grid, solver::SimpleSolver};
+    use crate::{
+        grid::Grid,
+        solver::{SimpleSolver, step::difficulty_score},
+    };
 
     #[test]
     pub fn test_simple_solver() {
+        //let expected_solution =
+        //    "927481356348625197165379284781243965496518723253796418619834572832957641574162839";
+        //let s = "...481.5.3......9.1...7...47....3.6...65....3....9...8....3...2....57....7....8.9";
+        let s = ".3.2.71.6..9.3...8.6..8............9.961.853.8............1..8.9...5.7..2.56.3.1.";
         let expected_solution =
-            "927481356348625197165379284781243965496518723253796418619834572832957641574162839";
-        let s = "...481.5.3......9.1...7...47....3.6...65....3....9...8....3...2....57....7....8.9";
+            "538247196129536478764981352312765849496128537857394621673419285941852763285673914";
 
         let mut grid = Grid::new_from_singline_digit(s).unwrap();
         let solver = SimpleSolver::new();
-        solver.solve(&mut grid);
+        let steps = solver.solve(&mut grid);
+        println!("{:?}", steps);
         assert!(grid.is_solved());
         assert_eq!(grid.to_digit_line(), expected_solution);
+        let score = difficulty_score(steps.as_slice());
+        println!("score:{}", score);
     }
 }

@@ -34,6 +34,9 @@ impl LockedCandidate {
     }
 
     pub fn apply(&self, grid: &mut Grid) {
+        if self.remove_candidates.is_empty() {
+            panic!("locked_candidate remove_candidates is is_empty");
+        }
         for cand in self.remove_candidates.iter() {
             grid.remvoe_candidate(cand);
         }
@@ -156,6 +159,9 @@ impl LockedCandidateFinder {
         let remove_candidates: Vec<Candidate> = remove_cells
             .map(|cell| Candidate::new(cell, value))
             .collect();
+        if remove_candidates.is_empty() {
+            println!("locked is empty{:?}", grid.to_digit_line());
+        }
         return LockedCandidate::new(
             remove_candidates,
             highlight_candidates,
@@ -178,6 +184,12 @@ impl SolverStrategy for LockedCandidateFinder {
                 }
                 self.find_locked_candidate(HouseType::Column, grid, acc);
             }
+        }
+    }
+    fn name(&self) -> &str {
+        match self.candidate_type {
+            LockedCandidateType::Pointing => "LockedCandidateFinder(Pointing)",
+            LockedCandidateType::Claiming => "LockedCandidateFinder(Claiming)",
         }
     }
 }
@@ -225,5 +237,17 @@ mod test {
                 1
             ))
         );
+    }
+    #[test]
+    fn test_pointing_loop() {
+        let s = "038207106109036008060081000300760809096108530800300601600010085900850760285673914";
+        let grid = Grid::new_from_singline_digit(s).unwrap();
+        let solver = LockedCandidateFinder::new(LockedCandidateType::Pointing);
+        let mut acc = AllStepAccumulator::default();
+        solver.find_step(&grid, &mut acc);
+        let steps = acc.get_steps();
+        for step in steps.iter() {
+            println!("{:?}", step);
+        }
     }
 }

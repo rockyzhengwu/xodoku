@@ -162,6 +162,9 @@ impl SolverStrategy for XChainFinder {
     fn find_step(&self, grid: &Grid, acc: &mut dyn StepAccumulator) {
         self.find_x_chain(grid, acc);
     }
+    fn name(&self) -> &str {
+        "XChainFinder"
+    }
 }
 
 #[cfg(test)]
@@ -177,7 +180,6 @@ mod test {
     fn test_find_x_chain() {
         let s = ":0701:7:3.4+52..8...6.+9.....5..7.3.....68+9.2+3...+734....6+315+27...1.+9+6......9.+4..6.+6.8217..5::742:";
         let grid = Grid::new_from_hodoku_line(s).unwrap();
-        println!("{}", grid.to_digit_line());
         let solver = XChainFinder::default();
         let mut acc = AllStepAccumulator::default();
         solver.find_step(&grid, &mut acc);

@@ -26,6 +26,9 @@ impl HiddenSingle {
 pub struct HiddenSingleFinder {}
 
 impl SolverStrategy for HiddenSingleFinder {
+    fn name(&self) -> &str {
+        "HiddenSingleFinder"
+    }
     fn find_step(&self, grid: &Grid, acc: &mut dyn StepAccumulator) {
         for house in 0..27 {
             for value in 1..=9 {

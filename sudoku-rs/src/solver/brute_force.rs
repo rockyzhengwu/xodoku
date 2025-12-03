@@ -57,6 +57,10 @@ impl BruteForceSolver {
         return SolutionState::MoreThanOne;
     }
 
+    pub fn solve(&self, grid: Grid) -> Option<Grid> {
+        self.solve_recursive(grid, false)
+    }
+
     fn solve_recursive(&self, mut grid: Grid, reverse: bool) -> Option<Grid> {
         let hidden_single_finder = HiddenSingleFinder::default();
         let naked_single_finder = NakedSingleFinder::default();

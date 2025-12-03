@@ -23,6 +23,9 @@ impl NakedSingle {
 pub struct NakedSingleFinder {}
 
 impl SolverStrategy for NakedSingleFinder {
+    fn name(&self) -> &str {
+        "NakedSingleFinder"
+    }
     fn find_step(&self, grid: &Grid, acc: &mut dyn StepAccumulator) {
         for cell in 0..81 {
             let candidate = grid.get_cell_candidate(cell);

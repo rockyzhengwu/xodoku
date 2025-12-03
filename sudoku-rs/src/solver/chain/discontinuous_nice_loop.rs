@@ -209,6 +209,9 @@ impl SolverStrategy for DiscontinuousNiceLoopFinder {
     fn find_step(&self, grid: &Grid, acc: &mut dyn StepAccumulator) {
         self.find_discontinuous_niceloop(grid, acc);
     }
+    fn name(&self) -> &str {
+        "DiscontinuousNiceLoopFinder"
+    }
 }
 
 #[cfg(test)]

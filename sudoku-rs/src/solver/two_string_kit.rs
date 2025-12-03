@@ -110,6 +110,9 @@ impl SolverStrategy for TwoStringKitFinder {
     fn find_step(&self, grid: &Grid, acc: &mut dyn StepAccumulator) {
         self.find_two_string_kit(grid, acc);
     }
+    fn name(&self) -> &str {
+        "TwoStringKitFinder"
+    }
 }
 
 #[cfg(test)]

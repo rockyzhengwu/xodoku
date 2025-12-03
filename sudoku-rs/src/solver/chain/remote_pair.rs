@@ -130,6 +130,9 @@ impl SolverStrategy for RemotePairFinder {
     fn find_step(&self, grid: &Grid, acc: &mut dyn StepAccumulator) {
         self.find_remote_paire(grid, acc);
     }
+    fn name(&self) -> &str {
+        "RemotePair"
+    }
 }
 
 #[cfg(test)]

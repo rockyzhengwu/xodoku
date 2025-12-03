@@ -146,6 +146,9 @@ impl SolverStrategy for HiddenSetFinder {
             return;
         }
     }
+    fn name(&self) -> &str {
+        "HiddenSetFinder"
+    }
 }
 
 #[cfg(test)]

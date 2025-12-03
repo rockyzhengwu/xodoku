@@ -133,6 +133,9 @@ impl SolverStrategy for XYChainFinder {
     fn find_step(&self, grid: &Grid, acc: &mut dyn StepAccumulator) {
         self.find_xy_chain(grid, acc);
     }
+    fn name(&self) -> &str {
+        "XChainFinder"
+    }
 }
 
 #[cfg(test)]
