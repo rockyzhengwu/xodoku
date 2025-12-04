@@ -7,9 +7,9 @@ use crate::{
 
 #[derive(Debug, PartialEq, Clone, Hash, Eq)]
 pub struct WWing {
-    remove_candidates: Vec<Candidate>,
-    highlight_candidates: Vec<Candidate>,
-    fin_candidates: Vec<Candidate>,
+    pub remove_candidates: Vec<Candidate>,
+    pub highlight_candidates: Vec<Candidate>,
+    pub fin_candidates: Vec<Candidate>,
 }
 impl WWing {
     pub fn apply(&self, grid: &mut Grid) {

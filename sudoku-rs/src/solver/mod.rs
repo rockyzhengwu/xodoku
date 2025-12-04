@@ -92,6 +92,19 @@ impl SimpleSolver {
         ];
         Self { strategies }
     }
+
+    pub fn hint(&self, grid: &Grid) -> step::Step {
+        let mut acc = SingleStepAccumulator::default();
+        for finder in self.strategies.iter() {
+            finder.find_step(grid, &mut acc);
+            let step = acc.get_step();
+            if step != &step::Step::Nothing {
+                return step.to_owned();
+            }
+        }
+        step::Step::Nothing
+    }
+
     pub fn solve(&self, grid: &mut Grid) -> Vec<step::Step> {
         let mut solve_steps = Vec::new();
         loop {

@@ -46,13 +46,13 @@ impl FishType {
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct Fish {
-    remove_candidates: Vec<Candidate>,
-    highlight_candidates: Vec<Candidate>,
-    fins: Vec<Candidate>,
-    basics: Vec<u8>,
-    covers: Vec<u8>,
-    value: u8,
-    fish_type: FishType,
+    pub remove_candidates: Vec<Candidate>,
+    pub highlight_candidates: Vec<Candidate>,
+    pub fins: Vec<Candidate>,
+    pub basics: Vec<u8>,
+    pub covers: Vec<u8>,
+    pub value: u8,
+    pub fish_type: FishType,
 }
 
 impl Fish {
@@ -73,6 +73,19 @@ impl Fish {
     pub fn apply(&self, grid: &mut Grid) {
         for cand in self.remove_candidates.iter() {
             grid.remvoe_candidate(cand);
+        }
+    }
+    pub fn name(&self) -> &str {
+        match self.fish_type {
+            FishType::XWing => "XWing",
+            FishType::SwordFish => "SwordFish",
+            FishType::JellyFish => "JellyFish",
+            FishType::FinnedXWing => "FinnedXWing",
+            FishType::FinnedSowrdFish => "FinnedSowrdFish",
+            FishType::FinnedJellFish => "FinnedJellFish",
+            FishType::SashimiXWing => "SashimiXWing",
+            FishType::SashimiSwordFish => "SashimiSwordFish",
+            FishType::SashimiJellyFish => "SashimiJellyFish",
         }
     }
 }

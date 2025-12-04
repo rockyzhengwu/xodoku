@@ -6,7 +6,7 @@ use crate::{
 
 #[derive(Debug, PartialEq, Clone, Hash, Eq)]
 pub struct NakedSingle {
-    candidate: Candidate,
+    pub candidate: Candidate,
 }
 
 impl NakedSingle {

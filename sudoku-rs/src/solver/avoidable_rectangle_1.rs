@@ -10,8 +10,8 @@ use crate::{
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct AvoidableRectangleType1 {
-    remove_candidates: Vec<Candidate>,
-    ur_points: Vec<Candidate>,
+    pub remove_candidates: Vec<Candidate>,
+    pub highlight_candidates: Vec<Candidate>,
 }
 impl AvoidableRectangleType1 {
     pub fn apply(&self, grid: &mut Grid) {
@@ -90,7 +90,7 @@ impl AvoidableRectangleType1Finder {
                         .collect();
                     let hint = AvoidableRectangleType1 {
                         remove_candidates,
-                        ur_points,
+                        highlight_candidates: ur_points,
                     };
                     if acc.add_step(Step::AvoidableRectangleType1(hint)) {
                         return;

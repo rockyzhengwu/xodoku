@@ -10,9 +10,9 @@ use crate::{
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct AvoidableRectangleType2 {
-    remove_candidates: Vec<Candidate>,
-    highlight_candidates: Vec<Candidate>,
-    fin_candidates: Vec<Candidate>,
+    pub remove_candidates: Vec<Candidate>,
+    pub highlight_candidates: Vec<Candidate>,
+    pub fin_candidates: Vec<Candidate>,
 }
 impl AvoidableRectangleType2 {
     pub fn apply(&self, grid: &mut Grid) {

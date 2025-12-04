@@ -23,9 +23,9 @@ pub enum ChainType {
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct ChainStep {
-    chain_type: ChainType,
-    chain: link::Chain,
-    remove_candidates: Vec<Candidate>,
+    pub chain_type: ChainType,
+    pub chain: link::Chain,
+    pub remove_candidates: Vec<Candidate>,
 }
 
 impl ChainStep {

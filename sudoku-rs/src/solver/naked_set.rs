@@ -7,16 +7,13 @@ use crate::{
 };
 use std::collections::HashSet;
 
-// 在 固定的 house 里，n 个 cell 的值只能是 n 个 value, 在和这 n 个 cell 在同一个区域的 cell 里的
-// 这 n 个 value 可以被删除
-
 #[derive(Debug, Clone, PartialEq, Hash, Eq)]
 pub struct NakedSet {
-    degree: u8,
-    remove_candidates: Vec<Candidate>,
-    highlight_candidates: Vec<Candidate>,
-    house: u8,
-    locked: bool,
+    pub degree: u8,
+    pub remove_candidates: Vec<Candidate>,
+    pub highlight_candidates: Vec<Candidate>,
+    pub house: u8,
+    pub locked: bool,
 }
 
 impl NakedSet {
@@ -40,6 +37,22 @@ impl NakedSet {
     pub fn apply(&self, grid: &mut Grid) {
         for cand in self.remove_candidates.iter() {
             grid.remvoe_candidate(cand);
+        }
+    }
+    pub fn name(&self) -> &str {
+        if self.locked {
+            match self.degree {
+                2 => "Locked Pair",
+                3 => "Locked Triple",
+                _ => "",
+            }
+        } else {
+            match self.degree {
+                2 => "Naked Pair",
+                3 => "Naked Triple",
+                4 => "Naked Quadruple",
+                _ => "",
+            }
         }
     }
 }

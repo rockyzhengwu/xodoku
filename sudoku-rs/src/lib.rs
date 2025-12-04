@@ -4,5 +4,5 @@ pub mod grid;
 pub mod solver;
 pub mod util;
 
-mod candidate;
+pub mod candidate;
 mod grid_constant;

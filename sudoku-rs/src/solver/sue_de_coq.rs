@@ -8,10 +8,10 @@ use crate::{
 
 #[derive(Debug, PartialEq, Clone, Hash, Eq)]
 pub struct SueDeCoq {
-    remove_candidates: Vec<Candidate>,
-    block_candidates: Vec<Candidate>,
-    row_col_candidates: Vec<Candidate>,
-    other_candidates: Vec<Candidate>,
+    pub remove_candidates: Vec<Candidate>,
+    pub block_candidates: Vec<Candidate>,
+    pub row_col_candidates: Vec<Candidate>,
+    pub other_candidates: Vec<Candidate>,
 }
 impl SueDeCoq {
     pub fn apply(&self, grid: &mut Grid) {

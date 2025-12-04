@@ -6,15 +6,14 @@ use crate::{
 };
 
 /**
- * 在 一个 house 中，n 个 value 只出现在 固定的 n 个 cell 中，这 n 个 cell 的其他值可以被删除.
  * **/
 
 #[derive(Debug, Clone, PartialEq, Hash, Eq)]
 pub struct HiddenSet {
-    degree: u8,
-    remove_candidates: Vec<Candidate>,
-    highlight_candidatets: Vec<Candidate>,
-    house: u8,
+    pub degree: u8,
+    pub remove_candidates: Vec<Candidate>,
+    pub highlight_candidates: Vec<Candidate>,
+    pub house: u8,
 }
 
 impl HiddenSet {
@@ -29,6 +28,14 @@ impl HiddenSet {
     pub fn apply(&self, grid: &mut Grid) {
         for cand in self.remove_candidates.iter() {
             grid.remvoe_candidate(cand);
+        }
+    }
+    pub fn name(&self) -> &str {
+        match self.degree {
+            2 => "Hidden Pair",
+            3 => "Hidden Triple",
+            4 => "Hidden Quadruple",
+            _ => "",
         }
     }
 }
@@ -124,7 +131,7 @@ impl HiddenSetFinder {
         let step = HiddenSet {
             degree: self.degree,
             remove_candidates: remove_able_candidates,
-            highlight_candidatets: highlight_candidates,
+            highlight_candidates,
             house,
         };
         Some(step)

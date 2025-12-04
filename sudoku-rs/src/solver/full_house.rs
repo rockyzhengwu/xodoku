@@ -6,9 +6,9 @@ use crate::{
 
 #[derive(Debug, PartialEq, Clone, Hash, Eq)]
 pub struct FullHouse {
-    cell: u8,
-    house: u8,
-    value: u8,
+    pub cell: u8,
+    pub house: u8,
+    pub value: u8,
 }
 
 impl FullHouse {

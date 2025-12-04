@@ -7,8 +7,8 @@ use crate::{
 
 #[derive(Debug, PartialEq, Clone, Hash, Eq)]
 pub struct HiddenSingle {
-    candidate: Candidate,
-    house: u8,
+    pub candidate: Candidate,
+    pub house: u8,
 }
 
 impl HiddenSingle {

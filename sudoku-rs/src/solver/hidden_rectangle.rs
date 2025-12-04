@@ -15,8 +15,8 @@ use crate::{
 
 #[derive(Debug, PartialEq, Clone, Hash, Eq)]
 pub struct HiddenRectangle {
-    remove_candidates: Vec<Candidate>,
-    highlight_candidates: Vec<Candidate>,
+    pub remove_candidates: Vec<Candidate>,
+    pub highlight_candidates: Vec<Candidate>,
 }
 impl HiddenRectangle {
     pub fn apply(&self, grid: &mut Grid) {

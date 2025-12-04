@@ -7,7 +7,7 @@ use crate::{
 
 #[derive(Debug, PartialEq, Clone, Hash, Eq)]
 pub struct BugPlusOne {
-    remove_candidates: Vec<Candidate>,
+    pub remove_candidates: Vec<Candidate>,
 }
 
 #[derive(Default)]

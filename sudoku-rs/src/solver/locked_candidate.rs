@@ -9,10 +9,10 @@ use crate::{
 
 #[derive(Debug, Clone, PartialEq, Hash, Eq)]
 pub struct LockedCandidate {
-    remove_candidates: Vec<Candidate>,
-    highlight_candidates: Vec<Candidate>,
-    candidate_type: LockedCandidateType,
-    house: u8,
+    pub remove_candidates: Vec<Candidate>,
+    pub highlight_candidates: Vec<Candidate>,
+    pub candidate_type: LockedCandidateType,
+    pub house: u8,
 }
 
 impl LockedCandidate {
@@ -159,9 +159,6 @@ impl LockedCandidateFinder {
         let remove_candidates: Vec<Candidate> = remove_cells
             .map(|cell| Candidate::new(cell, value))
             .collect();
-        if remove_candidates.is_empty() {
-            println!("locked is empty{:?}", grid.to_digit_line());
-        }
         return LockedCandidate::new(
             remove_candidates,
             highlight_candidates,

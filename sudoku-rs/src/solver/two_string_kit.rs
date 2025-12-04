@@ -10,10 +10,10 @@ use crate::{
 
 #[derive(Debug, PartialEq, Clone, Hash, Eq)]
 pub struct TwoStringKit {
-    value: u8,
-    remove_candidates: Vec<Candidate>,
-    highlight_candidates: Vec<Candidate>,
-    fin_candidates: Vec<Candidate>,
+    pub value: u8,
+    pub remove_candidates: Vec<Candidate>,
+    pub highlight_candidates: Vec<Candidate>,
+    pub fin_candidates: Vec<Candidate>,
 }
 
 impl TwoStringKit {

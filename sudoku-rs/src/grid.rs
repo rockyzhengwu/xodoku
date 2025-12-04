@@ -49,6 +49,26 @@ impl Default for Grid {
 }
 
 impl Grid {
+    pub fn new_from_digit_and_pms(digits: &[u8], pms: Vec<Vec<u8>>) -> Result<Self> {
+        let mut grid = Grid::default();
+        if digits.len() != 81 || pms.len() != 81 {
+            return Err(SudokuError::InvalidInput(format!(
+                "input digt need 81 number and 81 pms"
+            )));
+        }
+        for (i, d) in digits.iter().enumerate() {
+            if *d != 0 {
+                grid.values[i] = *d;
+            }
+        }
+        for (cell, pm) in pms.iter().enumerate() {
+            if !pm.is_empty() {
+                grid.pential_values[cell] = DigitSet::new_from_values(pm);
+            }
+        }
+
+        Ok(grid)
+    }
     pub fn new_from_singline_digit(digits: &str) -> Result<Self> {
         if digits.len() != 81 {
             return Err(SudokuError::InvalidInput(format!(
