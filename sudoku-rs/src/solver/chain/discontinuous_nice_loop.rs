@@ -6,6 +6,7 @@ use crate::{
     solver::{
         SolverStrategy,
         chain::{
+            ChainStep, ChainType,
             graph::CellGraph,
             link::{Chain, Inference, InferenceType, LinkType},
         },
@@ -13,19 +14,6 @@ use crate::{
         step_accumulator::StepAccumulator,
     },
 };
-
-#[derive(Debug, PartialEq, Eq, Hash, Clone)]
-pub struct DiscontinuousNiceLoop {
-    chain: Chain,
-    remove_candidates: Vec<Candidate>,
-}
-impl DiscontinuousNiceLoop {
-    pub fn apply(&self, grid: &mut Grid) {
-        for cand in self.remove_candidates.iter() {
-            grid.remvoe_candidate(cand);
-        }
-    }
-}
 
 #[derive(Default)]
 pub struct DiscontinuousNiceLoopFinder {}
@@ -159,11 +147,12 @@ impl DiscontinuousNiceLoopFinder {
                         .map(|v| Candidate::new(first.start.cell(), *v))
                         .collect();
                     if !remove_candidates.is_empty() {
-                        let hint = DiscontinuousNiceLoop {
+                        let hint = ChainStep {
                             chain: chain.clone(),
                             remove_candidates,
+                            chain_type: ChainType::DisContinuousNiceLoop,
                         };
-                        if acc.add_step(Step::DisContinuousNiceLoop(hint)) {
+                        if acc.add_step(Step::Chain(hint)) {
                             return;
                         }
                     }
@@ -177,11 +166,12 @@ impl DiscontinuousNiceLoopFinder {
                     let remove_candidates =
                         vec![Candidate::new(first.start.cell(), first.start.value())];
 
-                    let hint = DiscontinuousNiceLoop {
+                    let hint = ChainStep {
                         chain: chain.clone(),
                         remove_candidates,
+                        chain_type: ChainType::DisContinuousNiceLoop,
                     };
-                    if acc.add_step(Step::DisContinuousNiceLoop(hint)) {
+                    if acc.add_step(Step::Chain(hint)) {
                         return;
                     }
                 }
@@ -192,11 +182,12 @@ impl DiscontinuousNiceLoopFinder {
                 {
                     let remove_candidates =
                         vec![Candidate::new(first.start.cell(), first.start.value())];
-                    let hint = DiscontinuousNiceLoop {
+                    let hint = ChainStep {
                         chain: chain.clone(),
                         remove_candidates,
+                        chain_type: ChainType::DisContinuousNiceLoop,
                     };
-                    if acc.add_step(Step::DisContinuousNiceLoop(hint)) {
+                    if acc.add_step(Step::Chain(hint)) {
                         return;
                     }
                 }

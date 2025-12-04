@@ -7,6 +7,7 @@ use crate::{
     solver::{
         SolverStrategy,
         chain::{
+            ChainStep, ChainType,
             graph::CellGraph,
             link::{Chain, Inference, InferenceType, LinkType},
         },
@@ -14,19 +15,6 @@ use crate::{
         step_accumulator::StepAccumulator,
     },
 };
-
-#[derive(Debug, PartialEq, Eq, Hash, Clone)]
-pub struct ContinuousNiceLoop {
-    chain: Chain,
-    remove_candidates: Vec<Candidate>,
-}
-impl ContinuousNiceLoop {
-    pub fn apply(&self, grid: &mut Grid) {
-        for cand in self.remove_candidates.iter() {
-            grid.remvoe_candidate(cand);
-        }
-    }
-}
 
 #[derive(Default)]
 pub struct ContinuousNiceLoopFinder {}
@@ -194,11 +182,12 @@ impl ContinuousNiceLoopFinder {
                         .iter()
                         .map(|c| Candidate::new(*c, value))
                         .collect();
-                    let hint = ContinuousNiceLoop {
+                    let hint = ChainStep {
                         remove_candidates,
                         chain: chain.clone(),
+                        chain_type: ChainType::ContinuousNiceLoop,
                     };
-                    if acc.add_step(Step::ContinuousNiceLoop(hint)) {
+                    if acc.add_step(Step::Chain(hint)) {
                         return;
                     }
                 }

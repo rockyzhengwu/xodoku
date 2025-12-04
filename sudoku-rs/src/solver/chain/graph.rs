@@ -4,7 +4,7 @@ use crate::{
     candidate::Candidate,
     grid::Grid,
     grid_constant::{get_cell_buddies, get_cell_house},
-    solver::chain::{continuous_nice_loop, link::LinkType},
+    solver::chain::link::LinkType,
 };
 
 #[derive(Debug, PartialEq)]

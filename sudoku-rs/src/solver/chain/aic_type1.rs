@@ -4,6 +4,7 @@ use crate::candidate::Candidate;
 use crate::grid_constant::{get_cell_buddies, get_cell_house};
 use crate::solver::SolverStrategy;
 use crate::solver::chain::link::{Inference, InferenceType};
+use crate::solver::chain::{ChainStep, ChainType};
 use crate::{
     grid::Grid,
     solver::{
@@ -15,19 +16,6 @@ use crate::{
         step_accumulator::StepAccumulator,
     },
 };
-
-#[derive(Debug, PartialEq, Eq, Hash, Clone)]
-pub struct AicType1 {
-    chain: Chain,
-    remove_candidates: Vec<Candidate>,
-}
-impl AicType1 {
-    pub fn apply(&self, grid: &mut Grid) {
-        for cand in self.remove_candidates.iter() {
-            grid.remvoe_candidate(cand);
-        }
-    }
-}
 
 #[derive(Default)]
 pub struct AicType1Finder {}
@@ -115,11 +103,12 @@ impl AicType1Finder {
                                 .iter()
                                 .map(|c| Candidate::new(*c, first.start.value()))
                                 .collect();
-                            let aic_type1 = AicType1 {
+                            let aic_type1 = ChainStep {
                                 chain: chain.clone(),
                                 remove_candidates,
+                                chain_type: ChainType::AicType1,
                             };
-                            if acc.add_step(Step::AicType1(aic_type1)) {
+                            if acc.add_step(Step::Chain(aic_type1)) {
                                 return;
                             }
                         }

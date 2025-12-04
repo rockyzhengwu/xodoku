@@ -7,6 +7,7 @@ use crate::{
     solver::{
         SolverStrategy,
         chain::{
+            ChainStep, ChainType,
             graph::Graph,
             link::{Chain, Inference, InferenceType},
         },
@@ -14,19 +15,6 @@ use crate::{
         step_accumulator::StepAccumulator,
     },
 };
-
-#[derive(Debug, PartialEq, Eq, Hash, Clone)]
-pub struct XYChain {
-    chain: Chain,
-    remove_candidates: Vec<Candidate>,
-}
-impl XYChain {
-    pub fn apply(&self, grid: &mut Grid) {
-        for cand in self.remove_candidates.iter() {
-            grid.remvoe_candidate(cand);
-        }
-    }
-}
 
 #[derive(Default)]
 pub struct XYChainFinder {}
@@ -111,11 +99,12 @@ impl XYChainFinder {
                                 .iter()
                                 .map(|c| Candidate::new(*c, remove_v))
                                 .collect();
-                            let hint = XYChain {
+                            let hint = ChainStep {
                                 chain: chain.clone(),
                                 remove_candidates,
+                                chain_type: ChainType::XYChain,
                             };
-                            if acc.add_step(Step::XYChain(hint)) {
+                            if acc.add_step(Step::Chain(hint)) {
                                 return;
                             }
                         }

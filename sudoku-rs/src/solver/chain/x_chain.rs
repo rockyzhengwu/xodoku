@@ -7,6 +7,7 @@ use crate::{
     solver::{
         SolverStrategy,
         chain::{
+            ChainStep, ChainType,
             graph::Graph,
             link::{Chain, Inference, InferenceType, LinkType},
         },
@@ -14,46 +15,6 @@ use crate::{
         step_accumulator::StepAccumulator,
     },
 };
-
-#[derive(Debug, Hash, Clone)]
-pub struct XChain {
-    chain: Chain,
-    remove_candidates: Vec<Candidate>,
-}
-impl XChain {
-    pub fn apply(&self, grid: &mut Grid) {
-        for cand in self.remove_candidates.iter() {
-            grid.remvoe_candidate(cand);
-        }
-    }
-}
-
-impl PartialEq for XChain {
-    fn eq(&self, other: &Self) -> bool {
-        if self.chain.len() == other.chain.len() {
-            let cells: HashSet<u8> = self
-                .chain
-                .inferences
-                .iter()
-                .map(|inf| inf.start.cell())
-                .collect();
-            let other_cells: HashSet<u8> = other
-                .chain
-                .inferences
-                .iter()
-                .map(|inf| inf.start.cell())
-                .collect();
-            println!("eq:{:?},{:?}", cells, other_cells);
-            if cells == other_cells {
-                return true;
-            } else {
-                return false;
-            }
-        }
-        false
-    }
-}
-impl Eq for XChain {}
 
 #[derive(Default)]
 pub struct XChainFinder {}
@@ -140,11 +101,12 @@ impl XChainFinder {
                                 .into_iter()
                                 .map(|c| Candidate::new(c, x))
                                 .collect();
-                            let hint = XChain {
+                            let hint = ChainStep {
                                 remove_candidates,
                                 chain: chain.clone(),
+                                chain_type: ChainType::XChain,
                             };
-                            if acc.add_step(Step::XChain(hint)) {
+                            if acc.add_step(Step::Chain(hint)) {
                                 return;
                             }
                         }

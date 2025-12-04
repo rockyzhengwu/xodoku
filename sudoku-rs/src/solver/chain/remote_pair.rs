@@ -7,6 +7,7 @@ use crate::{
     solver::{
         SolverStrategy,
         chain::{
+            ChainStep, ChainType,
             graph::CellGraph,
             link::{Chain, Inference, InferenceType},
         },
@@ -14,19 +15,6 @@ use crate::{
         step_accumulator::StepAccumulator,
     },
 };
-
-#[derive(Debug, PartialEq, Eq, Hash, Clone)]
-pub struct RemotePair {
-    remove_candidates: Vec<Candidate>,
-    chain: Chain,
-}
-impl RemotePair {
-    pub fn apply(&self, grid: &mut Grid) {
-        for cand in self.remove_candidates.iter() {
-            grid.remvoe_candidate(cand);
-        }
-    }
-}
 
 #[derive(Default)]
 pub struct RemotePairFinder {}
@@ -114,11 +102,12 @@ impl RemotePairFinder {
                 if remove_candidates.is_empty() {
                     continue;
                 }
-                let hint = RemotePair {
+                let hint = ChainStep {
                     remove_candidates,
                     chain: current_chain.clone(),
+                    chain_type: ChainType::RemotePair,
                 };
-                if acc.add_step(Step::RemotePair(hint)) {
+                if acc.add_step(Step::Chain(hint)) {
                     return;
                 }
             }
