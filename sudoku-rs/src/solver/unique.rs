@@ -7,6 +7,42 @@ use crate::{
     util::create_permutations,
 };
 
+#[derive(Debug, PartialEq, Clone, Hash, Eq)]
+pub enum UniqueType {
+    Type1,
+    Type2,
+    Type3,
+    Type4,
+    Type5,
+    Type6,
+}
+
+#[derive(Debug, PartialEq, Clone, Hash, Eq)]
+pub struct UniqueStep {
+    pub unique_type: UniqueType,
+    pub highlight_candidates: Vec<Candidate>,
+    pub remove_candidates: Vec<Candidate>,
+    pub fin_candidates: Vec<Candidate>,
+}
+impl UniqueStep {
+    pub fn apply(&self, grid: &mut Grid) {
+        for cand in self.remove_candidates.iter() {
+            grid.remvoe_candidate(cand);
+        }
+    }
+
+    pub fn name(&self) -> &str {
+        match self.unique_type {
+            UniqueType::Type1 => "UniqueType1",
+            UniqueType::Type2 => "UniqueType2",
+            UniqueType::Type3 => "UniqueType3",
+            UniqueType::Type4 => "UniqueType4",
+            UniqueType::Type5 => "UniqueType5",
+            UniqueType::Type6 => "UniqueType6",
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct UniqueRectangle {
     points: [u8; 4],

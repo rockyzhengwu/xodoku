@@ -6,23 +6,10 @@ use crate::{
         SolverStrategy,
         step::Step,
         step_accumulator::StepAccumulator,
-        unique::{UniqueRectangle, find_unique},
+        unique::{UniqueRectangle, UniqueStep, UniqueType, find_unique},
     },
     util::create_permutations,
 };
-
-#[derive(Debug, PartialEq, Clone, Hash, Eq)]
-pub struct UniqueType2 {
-    highlight_candidates: Vec<Candidate>,
-    remove_candidates: Vec<Candidate>,
-}
-impl UniqueType2 {
-    pub fn apply(&self, grid: &mut Grid) {
-        for cand in self.remove_candidates.iter() {
-            grid.remvoe_candidate(cand);
-        }
-    }
-}
 
 #[derive(Default)]
 pub struct Unique2Finder {}
@@ -93,11 +80,13 @@ impl Unique2Finder {
             if remove_candidates.is_empty() {
                 continue;
             }
-            let ur2 = UniqueType2 {
+            let ur2 = UniqueStep {
                 remove_candidates,
                 highlight_candidates: ur.candidates(),
+                fin_candidates: Vec::new(),
+                unique_type: UniqueType::Type2,
             };
-            acc.add_step(Step::UniqueType2(ur2));
+            acc.add_step(Step::UniqueStep(ur2));
             if acc.is_finish() {
                 return;
             }

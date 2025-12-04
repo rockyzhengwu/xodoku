@@ -6,23 +6,10 @@ use crate::{
         SolverStrategy,
         step::Step,
         step_accumulator::StepAccumulator,
-        unique::{UniqueRectangle, find_unique},
+        unique::{UniqueRectangle, UniqueStep, UniqueType, find_unique},
     },
     util::{create_permutations, indexset::IndexSet},
 };
-
-#[derive(Debug, PartialEq, Clone, Hash, Eq)]
-pub struct UniqueType6 {
-    highlight_candidates: Vec<Candidate>,
-    remove_candidates: Vec<Candidate>,
-}
-impl UniqueType6 {
-    pub fn apply(&self, grid: &mut Grid) {
-        for cand in self.remove_candidates.iter() {
-            grid.remvoe_candidate(cand);
-        }
-    }
-}
 
 #[derive(Default)]
 pub struct Unique6Finder {}
@@ -84,11 +71,13 @@ impl Unique6Finder {
             if a_is_remove_able {
                 // create step
                 let remove_candidates = vec![Candidate::new(first, a), Candidate::new(second, a)];
-                let ur6 = UniqueType6 {
+                let ur6 = UniqueStep {
                     remove_candidates,
                     highlight_candidates: ur.candidates(),
+                    fin_candidates: Vec::new(),
+                    unique_type: UniqueType::Type6,
                 };
-                if acc.add_step(Step::UniqueType6(ur6)) {
+                if acc.add_step(Step::UniqueStep(ur6)) {
                     return;
                 }
             }
@@ -100,11 +89,13 @@ impl Unique6Finder {
             }
             if b_is_remvoe_able {
                 let remove_candidates = vec![Candidate::new(first, b), Candidate::new(second, b)];
-                let ur6 = UniqueType6 {
+                let ur6 = UniqueStep {
                     remove_candidates,
                     highlight_candidates: ur.candidates(),
+                    fin_candidates: Vec::new(),
+                    unique_type: UniqueType::Type6,
                 };
-                if acc.add_step(Step::UniqueType6(ur6)) {
+                if acc.add_step(Step::UniqueStep(ur6)) {
                     return;
                 }
             }

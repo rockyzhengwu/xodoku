@@ -8,23 +8,10 @@ use crate::{
         SolverStrategy,
         step::Step,
         step_accumulator::StepAccumulator,
-        unique::{UniqueRectangle, find_unique},
+        unique::{UniqueRectangle, UniqueStep, UniqueType, find_unique},
     },
     util::{create_permutations, digitset::DigitSet, indexset::IndexSet},
 };
-
-#[derive(Debug, PartialEq, Clone, Hash, Eq)]
-pub struct UniqueType5 {
-    highlight_candidates: Vec<Candidate>,
-    remove_candidates: Vec<Candidate>,
-}
-impl UniqueType5 {
-    pub fn apply(&self, grid: &mut Grid) {
-        for cand in self.remove_candidates.iter() {
-            grid.remvoe_candidate(cand);
-        }
-    }
-}
 
 #[derive(Default)]
 pub struct Unique5Finder {}
@@ -95,11 +82,13 @@ impl Unique5Finder {
                 .map(|c| Candidate::new(*c, extra_value))
                 .collect();
 
-            let ur5 = UniqueType5 {
+            let ur5 = UniqueStep {
                 remove_candidates,
                 highlight_candidates: ur.candidates(),
+                fin_candidates: Vec::new(),
+                unique_type: UniqueType::Type5,
             };
-            acc.add_step(Step::UniqueType5(ur5));
+            acc.add_step(Step::UniqueStep(ur5));
             if acc.is_finish() {
                 return;
             }

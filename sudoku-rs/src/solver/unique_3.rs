@@ -6,24 +6,10 @@ use crate::{
         SolverStrategy,
         step::Step,
         step_accumulator::StepAccumulator,
-        unique::{UniqueRectangle, find_unique},
+        unique::{UniqueRectangle, UniqueStep, UniqueType, find_unique},
     },
     util::{create_permutations, digitset::DigitSet, indexset::IndexSet},
 };
-
-#[derive(Debug, PartialEq, Clone, Hash, Eq)]
-pub struct UniqueType3 {
-    highlight_candidates: Vec<Candidate>,
-    remove_candidates: Vec<Candidate>,
-    fin_candidates: Vec<Candidate>,
-}
-impl UniqueType3 {
-    pub fn apply(&self, grid: &mut Grid) {
-        for cand in self.remove_candidates.iter() {
-            grid.remvoe_candidate(cand);
-        }
-    }
-}
 
 #[derive(Default)]
 pub struct Unique3Finder {}
@@ -140,13 +126,14 @@ impl Unique3Finder {
                             }
                         }
                     }
-                    let ur3 = UniqueType3 {
+                    let ur3 = UniqueStep {
                         remove_candidates,
                         highlight_candidates: ur.candidates(),
                         fin_candidates,
+                        unique_type: UniqueType::Type3,
                     };
 
-                    if acc.add_step(Step::UniqueType3(ur3)) {
+                    if acc.add_step(Step::UniqueStep(ur3)) {
                         return;
                     }
                 }
