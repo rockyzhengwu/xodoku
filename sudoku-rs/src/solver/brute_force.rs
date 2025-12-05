@@ -14,6 +14,20 @@ pub enum SolutionState {
     Unique,
     MoreThanOne,
 }
+#[derive(Debug)]
+pub struct Solution {
+    values: [u8; 81],
+    state: SolutionState,
+}
+impl Solution {
+    pub fn values(&self) -> &[u8; 81] {
+        &self.values
+    }
+
+    pub fn state(&self) -> &SolutionState {
+        &self.state
+    }
+}
 
 pub struct BruteForceSolver {}
 
@@ -57,8 +71,40 @@ impl BruteForceSolver {
         return SolutionState::MoreThanOne;
     }
 
-    pub fn solve(&self, grid: Grid) -> Option<Grid> {
-        self.solve_recursive(grid, false)
+    pub fn solve(&self, grid: Grid) -> Solution {
+        let solution_values = [0; 81];
+        if let Some(grid1) = self.solve_recursive(grid.clone(), false) {
+            if let Some(grid2) = self.solve_recursive(grid, true) {
+                let mut is_same = true;
+                for cell in 0_u8..81 {
+                    if grid1.get_value(cell) != grid2.get_value(cell) {
+                        is_same = false;
+                        break;
+                    }
+                }
+                if is_same {
+                    let solution_values = grid1.values().to_owned();
+                    return Solution {
+                        values: solution_values,
+                        state: SolutionState::Unique,
+                    };
+                } else {
+                    return Solution {
+                        values: solution_values,
+                        state: SolutionState::MoreThanOne,
+                    };
+                }
+            } else {
+                // impossiable
+                panic!("solve with reverse con't ffind solution");
+            }
+        } else {
+            let solution = Solution {
+                values: solution_values,
+                state: SolutionState::NoSolution,
+            };
+            return solution;
+        }
     }
 
     fn solve_recursive(&self, mut grid: Grid, reverse: bool) -> Option<Grid> {
