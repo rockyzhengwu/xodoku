@@ -2,6 +2,7 @@ use crate::{
     grid::Grid,
     grid_constant::get_house_cell_set,
     solver::{SolverStrategy, step::Step},
+    util::format_cell,
 };
 
 #[derive(Debug, PartialEq, Clone, Hash, Eq)]
@@ -18,6 +19,14 @@ impl FullHouse {
 
     pub fn apply(&self, grid: &mut Grid) {
         grid.set_value(self.cell, self.value, false);
+    }
+    pub fn explain(&self) -> String {
+        format!(
+            "<h3>Full House</h3> <p>cell <b>{}</b> is last empty of house <b>{}</b>  and only missing digit is <b>{}</b> </p>",
+            format_cell(self.cell),
+            self.house,
+            self.value
+        )
     }
 }
 
@@ -50,7 +59,7 @@ impl SolverStrategy for FullHOuseFinder {
         }
     }
     fn name(&self) -> &str {
-        "FullHouse"
+        "Full House"
     }
 }
 

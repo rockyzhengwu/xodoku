@@ -2,6 +2,7 @@ use crate::{
     candidate::Candidate,
     grid::Grid,
     solver::{SolverStrategy, step::Step, step_accumulator::StepAccumulator},
+    util::format_cell,
 };
 
 #[derive(Debug, PartialEq, Clone, Hash, Eq)]
@@ -16,6 +17,13 @@ impl NakedSingle {
     }
     pub fn apply(&self, grid: &mut Grid) {
         grid.set_value_with_candidate(&self.candidate);
+    }
+    pub fn explain(&self) -> String {
+        format!(
+            "<p>cell <b>{}</b> last possiable candidate is <b>{}</b></p>",
+            format_cell(self.candidate.cell()),
+            self.candidate.value()
+        )
     }
 }
 

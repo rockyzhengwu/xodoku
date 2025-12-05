@@ -38,6 +38,9 @@ impl HiddenSet {
             _ => "",
         }
     }
+    pub fn explain(&self) -> String {
+        format!("<h2>{}<h2>", self.name())
+    }
 }
 
 pub struct HiddenSetFinder {

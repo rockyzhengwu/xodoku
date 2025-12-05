@@ -3,7 +3,7 @@ use crate::{
     grid::{Grid, HouseType},
     grid_constant::{block, col, row},
     solver::{SolverStrategy, step::Step, step_accumulator::StepAccumulator},
-    util::{create_permutations, digitset::DigitSet},
+    util::{create_permutations, digitset::DigitSet, format_cell, format_house},
 };
 use std::collections::HashSet;
 
@@ -13,6 +13,7 @@ pub struct NakedSet {
     pub remove_candidates: Vec<Candidate>,
     pub highlight_candidates: Vec<Candidate>,
     pub house: u8,
+    pub locked_house: u8,
     pub locked: bool,
 }
 
@@ -55,6 +56,68 @@ impl NakedSet {
             }
         }
     }
+    fn format_cells(&self) -> String {
+        let mut res = String::new();
+        let cells: HashSet<u8> = self.highlight_candidates.iter().map(|c| c.cell()).collect();
+        let mut sorted_cells: Vec<u8> = cells.into_iter().collect();
+        sorted_cells.sort();
+        for (i, cell) in sorted_cells.iter().enumerate() {
+            if i < sorted_cells.len() - 1 {
+                res.push_str(format!("<b>{}</b>,", format_cell(*cell)).as_str())
+            } else {
+                res.push_str(format!("<b>{}</b>", format_cell(*cell)).as_str())
+            }
+        }
+        res
+    }
+    fn format_values(&self) -> String {
+        let mut res = String::new();
+        let values: HashSet<u8> = self
+            .highlight_candidates
+            .iter()
+            .map(|c| c.value())
+            .collect();
+        let mut sorted_values: Vec<u8> = values.into_iter().collect();
+        sorted_values.sort();
+        for (i, value) in sorted_values.iter().enumerate() {
+            if i < sorted_values.len() - 1 {
+                res.push_str(format!("<b>{}</b>,", value).as_str())
+            } else {
+                res.push_str(format!("<b>{}</b>", value).as_str())
+            }
+        }
+        res
+    }
+
+    pub fn explain(&self) -> String {
+        if !self.locked {
+            format!(
+                "<h3>{}</h3> <p> cells {} are both in the house <b>{}</b> and have candidates <b>{}</b>.one of the cells has to be <b>{}</b>  the other see {} same time can't be {} in <b>{}</b></p>",
+                self.name(),
+                self.format_cells(),
+                format_house(self.house),
+                self.format_values(),
+                self.format_values(),
+                self.format_cells(),
+                self.format_values(),
+                format_house(self.house)
+            )
+        } else {
+            format!(
+                "<h3>{}</h3> <p> cells {} are both in the house <b>{}</b> and <b>{}</b> have candidates <b>{}</b>.one of the cells has to be <b>{}</b> ,  the other see {} same time can't be {} in <b>{}</b> and<b>{}</b></p>",
+                self.name(),
+                self.format_cells(),
+                format_house(self.house),
+                format_house(self.locked_house),
+                self.format_values(),
+                self.format_values(),
+                self.format_cells(),
+                self.format_values(),
+                format_house(self.house),
+                format_house(self.locked_house)
+            )
+        }
+    }
 }
 
 pub struct NakedSetFinder {
@@ -89,6 +152,7 @@ impl NakedSetFinder {
             }
         }
     }
+
     pub fn create_naked_set(
         &self,
         grid: &Grid,
@@ -137,11 +201,20 @@ impl NakedSetFinder {
         if remove_candidates.is_empty() {
             return None;
         }
+        let mut locked_house = 28;
+        if locked {
+            for h in all_house.iter() {
+                if *h != house {
+                    locked_house = *h;
+                }
+            }
+        }
         let step = NakedSet {
             degree: self.degree,
             remove_candidates,
             highlight_candidates,
             house: house,
+            locked_house: locked_house,
             locked,
         };
         Some(step)

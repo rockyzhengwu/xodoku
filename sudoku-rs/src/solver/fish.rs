@@ -78,14 +78,14 @@ impl Fish {
     pub fn name(&self) -> &str {
         match self.fish_type {
             FishType::XWing => "XWing",
-            FishType::SwordFish => "SwordFish",
-            FishType::JellyFish => "JellyFish",
-            FishType::FinnedXWing => "FinnedXWing",
-            FishType::FinnedSowrdFish => "FinnedSowrdFish",
-            FishType::FinnedJellFish => "FinnedJellFish",
-            FishType::SashimiXWing => "SashimiXWing",
-            FishType::SashimiSwordFish => "SashimiSwordFish",
-            FishType::SashimiJellyFish => "SashimiJellyFish",
+            FishType::SwordFish => "Swordfish",
+            FishType::JellyFish => "Jellyfish",
+            FishType::FinnedXWing => "Finned XWing",
+            FishType::FinnedSowrdFish => "Finned Sowrdfish",
+            FishType::FinnedJellFish => "Finned Jellfish",
+            FishType::SashimiXWing => "Sashimi XWing",
+            FishType::SashimiSwordFish => "Sashimi Swordfish",
+            FishType::SashimiJellyFish => "Sashimi Jellyfish",
         }
     }
 }

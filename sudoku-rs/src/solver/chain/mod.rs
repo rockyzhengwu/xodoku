@@ -36,13 +36,13 @@ impl ChainStep {
     }
     pub fn name(&self) -> &str {
         match self.chain_type {
-            ChainType::RemotePair => "RemotePair",
-            ChainType::XChain => "XChain",
-            ChainType::XYChain => "XYChain",
-            ChainType::ContinuousNiceLoop => "ContinuouseNiceLoop",
-            ChainType::DisContinuousNiceLoop => "DisContinuousNiceLoop",
-            ChainType::AicType1 => "AicType1",
-            ChainType::AicType2 => "AicType2",
+            ChainType::RemotePair => "Remote Pair",
+            ChainType::XChain => "X-Chain",
+            ChainType::XYChain => "XY-Chain",
+            ChainType::ContinuousNiceLoop => "Continuouses Nice Loop",
+            ChainType::DisContinuousNiceLoop => "DisContinuous Nice Loop",
+            ChainType::AicType1 => "AIC Type1",
+            ChainType::AicType2 => "AIC Type2",
         }
     }
     pub fn difficulty(&self) -> u32 {

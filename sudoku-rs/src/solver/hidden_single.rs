@@ -3,6 +3,7 @@ use crate::{
     grid::Grid,
     grid_constant::get_house_cell_set,
     solver::{SolverStrategy, step::Step, step_accumulator::StepAccumulator},
+    util::format_cell,
 };
 
 #[derive(Debug, PartialEq, Clone, Hash, Eq)]
@@ -19,6 +20,14 @@ impl HiddenSingle {
 
     pub fn apply(&self, grid: &mut Grid) {
         grid.set_value_with_candidate(&self.candidate);
+    }
+    pub fn explain(&self) -> String {
+        format!(
+            "digit <b>{}</b> can only placed in cell <b>{}</b> for house<b>{}</b>",
+            self.candidate.value(),
+            format_cell(self.candidate.cell()),
+            self.house
+        )
     }
 }
 

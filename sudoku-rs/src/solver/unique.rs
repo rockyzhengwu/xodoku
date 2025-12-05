@@ -33,12 +33,12 @@ impl UniqueStep {
 
     pub fn name(&self) -> &str {
         match self.unique_type {
-            UniqueType::Type1 => "UniqueType1",
-            UniqueType::Type2 => "UniqueType2",
-            UniqueType::Type3 => "UniqueType3",
-            UniqueType::Type4 => "UniqueType4",
-            UniqueType::Type5 => "UniqueType5",
-            UniqueType::Type6 => "UniqueType6",
+            UniqueType::Type1 => "Unique Type1",
+            UniqueType::Type2 => "Unique Type2",
+            UniqueType::Type3 => "Unique Type3",
+            UniqueType::Type4 => "Unique Type4",
+            UniqueType::Type5 => "Unique Type5",
+            UniqueType::Type6 => "Unique Type6",
         }
     }
 }
