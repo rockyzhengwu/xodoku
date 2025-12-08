@@ -1,0 +1,30 @@
+.digit {
+  fill: var(--vm-digit-color);
+  user-select: none;
+}
+
+.digitLine {
+  stroke-width: 1;
+  fill: none;
+  stroke: var(--grid-line-color);
+}
+
+.digitBg {
+  fill: var(--vm-background-color);
+}
+
+.digitCover {
+  fill: transparent;
+  cursor: pointer;
+}
+
+.digitCover:hover {
+  fill: var(--cell-hover-color);
+  opacity: 0.3;
+}
+
+.digitCoverActive {
+  fill: red;
+  opacity: 0.3;
+  transition: fill 2s ease-in-out;
+}

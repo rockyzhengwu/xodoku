@@ -1,0 +1,12 @@
+.post {
+  width: 50vw;
+}
+.post img {
+  max-width: 60%;
+}
+
+@media screen and (max-width: 768px) {
+  .post {
+    width: 100vw;
+  }
+}

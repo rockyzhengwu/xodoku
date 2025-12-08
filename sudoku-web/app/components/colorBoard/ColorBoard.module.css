@@ -1,0 +1,5 @@
+.digitLine {
+  stroke-width: 1;
+  fill: none;
+  stroke: var(--grid-line-color);
+}

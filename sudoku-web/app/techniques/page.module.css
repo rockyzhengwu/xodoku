@@ -1,0 +1,13 @@
+.category {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.category a {
+  text-decoration: none;
+}
+
+.link {
+  text-decoration: none;
+}

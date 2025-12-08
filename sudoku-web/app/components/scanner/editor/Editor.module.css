@@ -1,0 +1,93 @@
+.editor {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  width: 100%;
+}
+
+.previewSection {
+  display: flex;
+  justify-content: start; /* Centers horizontally */
+  align-items: start; /* Centers vertically */
+  flex-direction: row;
+}
+
+.imageSection {
+  flex: 1;
+  min-width: 500px;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  display: flex;
+  height: 50vh;
+}
+
+.previewImage {
+  height: 100%;
+  object-fit: contain;
+  width: auto;
+  display: block;
+}
+
+.gridSection {
+  min-width: 600px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  height: 50vh;
+  margin-right: 20px;
+}
+
+.descText {
+  color: gray;
+}
+
+.gridSection:focus {
+  outline: none;
+}
+
+.actionBar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  width: 100vw;
+}
+
+@media (max-width: 768px) {
+  .editor {
+    flex-direction: column;
+    width: 100%;
+  }
+  .previewSection {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .gridSection {
+    min-width: 350px;
+    margin-left: auto;
+    border-radius: auto;
+    padding: auto;
+    height: 100vw;
+    width: 100%;
+  }
+
+  .previewImage {
+    height: 40vh;
+    object-fit: contain;
+    width: 100%;
+    display: block;
+  }
+
+  .imageSection {
+    flex: 1;
+    min-width: auto;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    display: flex;
+    height: 100vw;
+  }
+}

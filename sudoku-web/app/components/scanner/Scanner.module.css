@@ -1,0 +1,12 @@
+.container {
+  width: 50vw;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 100%;
+  }
+}

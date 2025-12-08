@@ -1,0 +1,89 @@
+.cellBg0 {
+  fill: transparent;
+}
+.cellBg1 {
+  fill: var(--digit-cell-bgc-1);
+}
+.cellBg2 {
+  fill: var(--digit-cell-bgc-2);
+}
+
+.cellBg3 {
+  fill: var(--digit-cell-bgc-3);
+}
+
+.cellBg4 {
+  fill: var(--digit-cell-bgc-4);
+}
+
+.cellBg5 {
+  fill: var(--digit-cell-bgc-5);
+}
+
+.cellBg6 {
+  fill: var(--digit-cell-bgc-6);
+}
+
+.cellBg7 {
+  fill: var(--digit-cell-bgc-7);
+}
+
+.cellBg8 {
+  fill: var(--digit-cell-bgc-8);
+}
+.cellBg9 {
+  fill: var(--digit-cell-bgc-9);
+}
+
+.cellCoverError {
+  fill: red;
+  opacity: 0.3;
+}
+
+.cellCoverSelected {
+  fill: var(--cell-selected-bg-color);
+  stroke: var(--cell-selected-stroke-color);
+  stroke-width: 8;
+  stroke-opacity: 1;
+  fill-opacity: 0.3;
+}
+.cellCoverSelected:hover {
+  fill: var(--cell-hover-color);
+}
+
+.cellCoverSelectedBuddy {
+  fill: var(--cell-selected-buddy-color);
+  opacity: 0.3;
+}
+
+.cellCoverSelectedBuddy:hover {
+  fill: var(--cell-hover-color);
+  opacity: 0.3;
+}
+
+.cellCoverSelectedSame {
+  fill: var(--cell-selected-same-bgc);
+  opacity: 0.3;
+}
+
+.cellCover {
+  fill: transparent;
+  transition: background-color 0.3s ease;
+}
+
+.cellCover:hover {
+  fill: var(--cell-hover-color);
+  opacity: 0.3;
+}
+
+.digitNotGiven {
+  fill: var(--digit-color);
+}
+
+.digitGiven {
+  fill: var(--given-digit-color);
+}
+
+.pmDigit {
+  fill: var(--pencil-mark-color);
+}

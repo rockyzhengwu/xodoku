@@ -1,0 +1,15 @@
+.board {
+  background-color: var(--background-color);
+}
+
+.line {
+  stroke-width: 2;
+  fill: none;
+  stroke: var(--grid-line-color);
+}
+
+.line-bold {
+  stroke-width: 5;
+  fill: none;
+  stroke: var(--grid-line-color);
+}

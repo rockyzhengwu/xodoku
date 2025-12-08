@@ -1,0 +1,11 @@
+.input-digitboard {
+  width: 80%;
+}
+
+.topActionBar {
+  background-color: var(--vm-background-color);
+}
+
+.controlButton {
+  background-color: var(--vm-background-color);
+}

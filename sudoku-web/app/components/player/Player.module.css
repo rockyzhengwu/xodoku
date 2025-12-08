@@ -1,0 +1,42 @@
+.player {
+  display: flex;
+  flex-direction: row;
+  user-select: none;
+}
+
+.digitGrid {
+  min-width: 600px;
+}
+
+.digitGrid:focus {
+  outline: none;
+}
+
+.playerControl {
+  background-color: var(--vm-background-color);
+  border-radius: 8px;
+  margin-left: 20px;
+  min-width: 350px;
+}
+
+@media (max-width: 768px) {
+  .player {
+    flex-direction: column; /* Stack on smaller screens */
+    width: 100%;
+    margin: 0;
+    justify-content: center;
+  }
+
+  .digitGrid {
+    width: 100%;
+    max-width: auto;
+    min-width: 100vw;
+  }
+
+  .playerControl {
+    width: 100%;
+    min-width: auto;
+    padding: 0;
+    margin-left: 0px;
+  }
+}

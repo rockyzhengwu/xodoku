@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root[data-mantine-color-scheme="light"] {
+  --background-color: #fefefe;
+
+  --grid-line-color: black;
+  --cell-hover-color: #5a5a5a;
+
+  --digit-color: hsl(216, 72%, 53%);
+  --given-digit-color: black;
+
+  --cell-selected-bg-color: #004fe368;
+  --cell-selected-stroke-color: #305cde;
+  --cell-selected-buddy-color: #fdf0d5;
+
+  --cell-selected-same-bgc: #ffa800;
+
+  --app-font-family: "Helvetica Neue", Arial, sans-serif;
+  --pencil-mark-color: #696969;
+
+  --vm-background-color: #d3d3d3;
+  --vm-digit-color: black;
+
+  --digit-cell-bgc-1: rgb(255, 192, 89);
+  --digit-cell-bgc-2: rgb(177, 165, 243);
+  --digit-cell-bgc-3: rgb(247, 165, 167);
+  --digit-cell-bgc-4: rgb(134, 232, 208);
+  --digit-cell-bgc-5: rgb(134, 242, 128);
+  --digit-cell-bgc-6: rgb(215, 255, 215);
+  --digit-cell-bgc-7: rgb(51, 204, 255);
+  --digit-cell-bgc-8: rgb(247, 247, 197);
+  --digit-cell-bgc-9: rgb(247, 228, 197);
+}
+
+:root[data-mantine-color-scheme="dark"] {
+  --background-color: #3c3637;
+  --text-color: #9d9a9a;
+
+  --grid-line-color-bold: #a6a4a4;
+
+  --grid-line-color: #878787;
+  --cell-hover-color: #fdfbd4;
+
+  --digit-color: #6c9cfd;
+  --pencil-mark-color: #6c9cfd;
+
+  --given-digit-color: #edeaea;
+
+  --cell-selected-bg-color: #545333;
+  --cell-selected-stroke-color: #ffb343;
+  --cell-selected-buddy-color: #57b9ff;
+  --cell-selected-same-bgc: #0047ab;
+
+  --vm-digit-color: hsl(216, 72%, 53%);
+  --vm-background-color: #535962;
+
+  --app-font-family: "Helvetica Neue", Arial, sans-serif;
+
+  --digit-cell-bgc-1: rgb(255, 192, 89);
+  --digit-cell-bgc-2: rgb(177, 165, 243);
+  --digit-cell-bgc-3: rgb(247, 165, 167);
+  --digit-cell-bgc-4: rgb(134, 232, 208);
+  --digit-cell-bgc-5: rgb(134, 242, 128);
+  --digit-cell-bgc-6: rgb(215, 255, 215);
+  --digit-cell-bgc-7: rgb(51, 204, 255);
+  --digit-cell-bgc-8: rgb(247, 247, 197);
+  --digit-cell-bgc-9: rgb(247, 228, 197);
+}
+
+body {
+  box-sizing: border-box;
+  font-family: var(--app-font-family);
+}
