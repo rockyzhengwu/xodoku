@@ -249,6 +249,9 @@ impl Grid {
     pub fn get_value(&self, cell: u8) -> u8 {
         self.values[cell as usize]
     }
+    pub fn unsolved_count(&self) -> u8 {
+        self.unsolved_count
+    }
 
     pub fn get_cell_candidate(&self, cell: u8) -> DigitSet {
         self.pential_values[cell as usize]
@@ -476,7 +479,6 @@ pub enum Difficulty {
     Hard,
     UnFair,
     Extreme,
-    INCOMPLETE,
 }
 impl Difficulty {
     pub fn min_score(&self) -> u32 {
@@ -486,7 +488,6 @@ impl Difficulty {
             Difficulty::Hard => 1000,
             Difficulty::UnFair => 1600,
             Difficulty::Extreme => 2000,
-            Difficulty::INCOMPLETE => 2500,
         }
     }
     pub fn max_score(&self) -> u32 {
@@ -494,9 +495,26 @@ impl Difficulty {
             Difficulty::Easy => 800,
             Difficulty::Medium => 1000,
             Difficulty::Hard => 1600,
-            Difficulty::UnFair => 2000,
-            Difficulty::Extreme => 2500,
-            Difficulty::INCOMPLETE => u32::MAX,
+            Difficulty::UnFair => 2600,
+            Difficulty::Extreme => 5000,
+        }
+    }
+    pub fn min_clue(&self) -> u8 {
+        match self {
+            Difficulty::Easy => 49,
+            Difficulty::Medium => 38,
+            Difficulty::Hard => 29,
+            Difficulty::UnFair => 20,
+            Difficulty::Extreme => 17,
+        }
+    }
+    pub fn max_clue(&self) -> u8 {
+        match self {
+            Difficulty::Easy => 55,
+            Difficulty::Medium => 49,
+            Difficulty::Hard => 38,
+            Difficulty::UnFair => 29,
+            Difficulty::Extreme => 25,
         }
     }
 }

@@ -39,13 +39,69 @@ impl BruteForceSolver {
     }
 
     pub fn generate_solution(&self) -> Option<Grid> {
-        let grid = Grid::default();
-        match self.solve_recursive(grid) {
-            Some(grid) => {
-                return Some(grid);
+        let cells = self.generate_cell_order();
+        let mut level = 0;
+        let mut tries = 0;
+        let mut stack = vec![SolverState::default(); 81];
+        loop {
+            if stack[level].grid.is_solved() {
+                return Some(stack[level].grid.clone());
             }
-            None => None,
+            let mut cell_index = None;
+            for cell in cells {
+                if stack[level].grid.get_value(cell) == 0 {
+                    cell_index = Some(cell);
+                    break;
+                }
+            }
+            if cell_index.is_none() {
+                println!(
+                    "{:?},{:?}",
+                    stack[level].grid.values(),
+                    stack[level].grid.is_solved()
+                );
+                println!("impossiable");
+            }
+            let cell_index = cell_index.unwrap();
+            stack[level + 1].cell_index = cell_index;
+            stack[level + 1].cand_index = 0;
+            stack[level + 1].candidates = stack[level].grid.get_cell_candidate(cell_index).values();
+
+            level += 1;
+            tries += 1;
+            if tries > 100 {
+                return None;
+            }
+            let mut done = false;
+            loop {
+                while stack[level].cand_index >= stack[level].candidates.len() {
+                    level -= 1;
+                    if level == 0 {
+                        done = true;
+                        break;
+                    }
+                }
+                if done {
+                    break;
+                }
+                let can_index = stack[level].cand_index;
+                stack[level].cand_index += 1;
+                let cand = stack[level].candidates[can_index];
+                stack[level].grid = stack[level - 1].grid.clone();
+                let index = stack[level].cell_index;
+                if !stack[level].grid.set_value(index, cand, false) {
+                    continue;
+                } else {
+                    self.fill_singles(&mut stack[level].grid);
+                    break;
+                }
+            }
+            if done {
+                println!("done: {:?}", done);
+                break;
+            }
         }
+        return None;
     }
 
     pub fn get_solution_state(&self, grid: &Grid) -> SolutionState {
@@ -150,38 +206,6 @@ impl BruteForceSolver {
             }
         }
     }
-
-    fn solve_recursive(&self, mut grid: Grid) -> Option<Grid> {
-        self.fill_singles(&mut grid);
-        if grid.is_solved() {
-            return Some(grid);
-        }
-        let least_cell = grid.get_min_candidate_cell().unwrap();
-        let mut rng = rand::rng();
-        let first_value = rng.random_range(0..9);
-        let value_list: Vec<u8> = (1..=9).collect();
-
-        for v in value_list.iter() {
-            let value = (v + first_value) % 9 + 1;
-            let candidate = grid.get_cell_candidate(least_cell);
-            if candidate.contains(value) {
-                let current_grid = grid.clone();
-                let res = grid.set_value(least_cell, value, false);
-                if !res {
-                    continue;
-                }
-                match self.solve_recursive(grid) {
-                    Some(solution) => {
-                        return Some(solution);
-                    }
-                    None => {
-                        grid = current_grid.clone();
-                    }
-                }
-            }
-        }
-        None
-    }
 }
 #[cfg(test)]
 mod test {
@@ -192,11 +216,11 @@ mod test {
     #[test]
     fn test_solution_generation() {
         let brute_force = BruteForceSolver::new();
-        let solution = brute_force.generate_solution();
-        assert!(!solution.is_none());
+        let solution = brute_force.generate_solution().unwrap();
+        println!("{:?}", solution.to_digit_line())
     }
     #[test]
-    fn test_solution_generation_recursive() {
+    fn test_solution_state() {
         let brute_force = BruteForceSolver::new();
         let grid = Grid::new_from_singline_digit(
             "040000200070205849285409300031000920000070000052000470007908632328501090004000010",

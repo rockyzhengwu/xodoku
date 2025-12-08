@@ -137,7 +137,7 @@ impl SimpleSolver {
             }
         }
         if !grid.is_solved() {
-            total_score = u32::MAX;
+            total_score = 5000;
         }
         let solution_path = SolutionPath::new(solve_steps, total_score);
         solution_path
@@ -150,27 +150,12 @@ mod test {
 
     #[test]
     pub fn test_simple_solver() {
-        //let expected_solution =
-        //    "927481356348625197165379284781243965496518723253796418619834572832957641574162839";
-        //let s = "...481.5.3......9.1...7...47....3.6...65....3....9...8....3...2....57....7....8.9";
-        //let s = "2...6..91..4....3....9....6.6.19..7...52.4..........84.8....62..2.53..........7.3";
-        //let expected_solution =
-        //    "257463891694815237138927456463198572815274369972356184381749625726531948549682713";
-        //let s = "750648912812539647469712385975821436124376598386954271691283754247195863538467129";
-        //let expected_solution =
-        //    "753648912812539647469712385975821436124376598386954271691283754247195863538467129";
-
-        let s = "495123670360578294782946315026307489534689127879204563917402056208765931653800740";
         let s = "356748912798602034120359786273561849581090200649020153865974301410235698030186475";
-        let expected_solution =
-            "495123678361578294782946315126357489534689127879214563917432856248765931653891742";
 
         let mut grid = Grid::new_from_singline_digit(s).unwrap();
         let solver = SimpleSolver::new();
         let solution = solver.solve(&mut grid);
-        println!("{:?}", solution.steps());
         assert!(grid.is_solved());
-        // assert_eq!(grid.to_digit_line(), expected_solution);
         let score = solution.score();
         println!("score:{}", score);
     }
