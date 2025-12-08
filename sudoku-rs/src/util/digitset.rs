@@ -61,6 +61,9 @@ impl DigitSet {
     }
 
     pub fn contains(&self, v: u8) -> bool {
+        if v == 0 {
+            return false;
+        }
         let t = self.0 & (1_u16 << (v - 1)) & DIGIT_ALL;
         (t >> (v - 1)) > 0
     }

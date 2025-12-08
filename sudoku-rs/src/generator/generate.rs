@@ -1,86 +1,115 @@
 use crate::{
-    error::Result,
-    grid::Grid,
-    solver::brute_force::{BruteForceSolver, SolutionState},
+    error::{Result, SudokuError},
+    grid::{Difficulty, Grid},
+    solution::SolutionState,
+    solver::{SimpleSolver, brute_force::BruteForceSolver},
 };
+
 use rand::Rng;
 
-pub struct Generator {}
+pub struct GeneratedGrid {
+    pub grid: Grid,
+    pub solution: [u8; 81],
+    pub score: u32,
+}
 
-impl Generator {
-    pub fn new() -> Self {
-        Generator {}
-    }
-    pub fn generate(&self) -> Result<Grid> {
-        let solver = BruteForceSolver::new();
+pub fn generate_sudoku(difficulty: &Difficulty) -> Result<GeneratedGrid> {
+    let solver = BruteForceSolver::new();
+    let simple_solver = SimpleSolver::new();
+    loop {
         let solution_grid = solver.generate_solution().unwrap();
 
-        let rand_cells = self.generate_cell_order();
-
+        let rand_cells = generate_cell_order();
         let mut attempts = 0;
-        let mut is_success = true;
         let mut rng = rand::rng();
         let mut grid = solution_grid.clone();
-        while is_success && attempts < 6 {
-            let mut index = rng.random_range(0..81);
+        let mut index = rng.random_range(0..81);
+        let mut count_down = 81;
+        attempts += 1;
+        if attempts > 1 {
+            break;
+        }
+        while count_down > 0 {
             let cell = rand_cells[index];
-            let mut count_down = 81;
-            is_success = false;
-            attempts += 1;
-            while !is_success && count_down > 0 {
-                if grid.get_value(cell) != 0 {
-                    grid.set_value(cell, 0, false);
-                    let state = solver.get_solution_state(&solution_grid);
+            if grid.get_value(cell) != 0 {
+                let set_success = grid.set_value(cell, 0, false);
+                if set_success {
+                    let state = solver.get_solution_state(&grid);
                     match state {
                         SolutionState::NoSolution => {
-                            //attempts += 1;
-                            //grid.set_value(cell, solution_grid.get_value(cell), false);
-                            println!("imposiabble");
+                            panic!("imposiabble no solution when generate");
                         }
                         SolutionState::Unique => {
-                            println!("unique");
-                            is_success = true;
-                            if grid.clude_count() < 50 {
-                                return Ok(grid);
+                            let mut grid_to_solve = grid.clone();
+                            let solution = simple_solver.solve(&mut grid_to_solve);
+                            if solution.score() > difficulty.min_score()
+                                && solution.score() < difficulty.max_score()
+                            {
+                                let res = GeneratedGrid {
+                                    grid: grid,
+                                    solution: solution_grid.values().to_owned(),
+                                    score: solution.score(),
+                                };
+                                return Ok(res);
                             }
+                            continue;
                         }
                         SolutionState::MoreThanOne => {
-                            println!("MoreThanOne");
-                            attempts += 1;
                             grid.set_value(cell, solution_grid.get_value(cell), false);
                         }
                     }
                 }
-                index = (index + 1) % 81;
-                count_down -= 1;
+            }
+            count_down -= 1;
+            index = (index + 1) % 81;
+        }
+        let mut grid_to_solve = grid.clone();
+        let state = solver.get_solution_state(&grid_to_solve);
+        match state {
+            SolutionState::Unique => {
+                let solution = simple_solver.solve(&mut grid_to_solve);
+                if solution.score() > difficulty.min_score()
+                    && solution.score() < difficulty.max_score()
+                {
+                    let res = GeneratedGrid {
+                        grid: grid,
+                        solution: solution_grid.values().to_owned(),
+                        score: solution.score(),
+                    };
+                    return Ok(res);
+                }
+            }
+            _ => {
+                return Err(SudokuError::GenerateFailed);
             }
         }
-        return Ok(grid);
     }
+    return Err(SudokuError::GenerateFailed);
+}
 
-    fn generate_cell_order(&self) -> [u8; 81] {
-        let mut cells = [0; 81];
-        for i in 0..81 {
-            cells[i] = i as u8;
-        }
-        for _ in 0..81 {
-            let mut rng = rand::rng();
-            let a: usize = rng.random_range(0..81);
-            let b: usize = rng.random_range(0..81);
-            cells.swap(a, b);
-        }
-        cells
+fn generate_cell_order() -> [u8; 81] {
+    let mut cells = [0; 81];
+    for i in 0..81 {
+        cells[i] = i as u8;
     }
+    for _ in 0..81 {
+        let mut rng = rand::rng();
+        let a: usize = rng.random_range(0..81);
+        let b: usize = rng.random_range(0..81);
+        cells.swap(a, b);
+    }
+    cells
 }
 
 #[cfg(test)]
 mod test {
-    use crate::generator::generate::Generator;
+    use super::generate_sudoku;
+    use crate::grid::Difficulty;
 
     #[test]
     pub fn test_generate() {
-        let generator = Generator::new();
-        let grid = generator.generate().unwrap();
-        println!("{:?}", grid.to_digit_line());
+        let grid = generate_sudoku(&Difficulty::Easy).unwrap();
+        println!("generate: result:{:?}", grid.grid.to_digit_line());
+        println!("{:?}", grid.grid.check_state_valid())
     }
 }

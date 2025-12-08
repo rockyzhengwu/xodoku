@@ -104,8 +104,8 @@ impl Grid {
             .fold(0, |s, x| if x != &0 { s + 1 } else { s })
     }
 
-    pub fn set_value_with_candidate(&mut self, candidate: &Candidate) {
-        self.set_value(candidate.cell(), candidate.value(), false);
+    pub fn set_value_with_candidate(&mut self, candidate: &Candidate) -> bool {
+        self.set_value(candidate.cell(), candidate.value(), false)
     }
 
     pub fn remvoe_candidate(&mut self, candidate: &Candidate) {
@@ -121,7 +121,7 @@ impl Grid {
         }
         if value == 0 && self.values[cell as usize] != 0 {
             self.delete_cell_value(cell);
-            self.is_given[cell as usize] = false;
+            self.is_given[cell as usize] = is_given;
         } else if value != 0 && self.values[cell as usize] != 0 {
             self.replace_cell_value(cell, value);
             self.is_given[cell as usize] = is_given;
@@ -134,6 +134,7 @@ impl Grid {
         }
         return true;
     }
+
     pub fn is_given(&self, cell: u8) -> bool {
         self.is_given[cell as usize]
     }
@@ -160,6 +161,7 @@ impl Grid {
         }
         return true;
     }
+
     pub fn values(&self) -> &[u8; 81] {
         &self.values
     }
@@ -180,6 +182,7 @@ impl Grid {
     fn delete_cell_value(&mut self, cell: u8) {
         // need old value is not zero
         let old = std::mem::replace(&mut self.values[cell as usize], 0);
+
         let buddies = get_cell_buddies(cell);
         let mut pential_set = DigitSet::new_full();
         for buddy in buddies.iter() {
@@ -189,6 +192,12 @@ impl Grid {
                 pential_set.remove(buddy_value);
             }
         }
+
+        let cell_candidates = self.pential_values[cell as usize];
+        for cand in cell_candidates.iter() {
+            self.remove_candidate(cell, cand);
+        }
+
         for p in pential_set.values() {
             self.add_candidate(cell, p);
         }
@@ -203,13 +212,22 @@ impl Grid {
             self.add_candidate(buddy, old);
             self.remove_candidate(buddy, value);
         }
-        self.pential_values[cell as usize] = DigitSet::new_empty();
     }
 
     fn add_candidate(&mut self, cell: u8, value: u8) {
-        if value == 0 || self.pential_values[cell as usize].contains(value) {
+        if value == 0
+            || self.pential_values[cell as usize].contains(value)
+            || self.values[cell as usize] != 0
+        {
             return;
         }
+        let buddies = get_cell_buddies(cell);
+        for budy in buddies.iter() {
+            if self.values[budy as usize] == value {
+                return;
+            }
+        }
+
         self.pential_values[cell as usize].add(value);
         let houses = get_cell_house(cell);
         for h in houses {
@@ -373,6 +391,82 @@ impl Grid {
         }
         return true;
     }
+
+    pub fn get_min_candidate_cell(&self) -> Option<u8> {
+        let mut least_cell: u8 = 82;
+        let mut min_count = 10;
+        for cell in 0_u8..81 {
+            if self.values[cell as usize] != 0 {
+                continue;
+            }
+            let candidate_set = self.get_cell_candidate(cell);
+            if candidate_set.count() < min_count {
+                min_count = candidate_set.count();
+                least_cell = cell;
+            }
+        }
+        if least_cell > 81 {
+            None
+        } else {
+            Some(least_cell)
+        }
+    }
+
+    pub fn check_state_valid(&self) -> Result<()> {
+        // just for test
+        for cell in 0_u8..81 {
+            let v = self.values[cell as usize];
+            if v == 0 {
+                let candidate = self.pential_values[cell as usize];
+                for buddy in get_cell_buddies(cell).iter() {
+                    let budy_v = self.values[buddy as usize];
+                    if budy_v != 0 && candidate.contains(budy_v) {
+                        return Err(SudokuError::GridStateError(format!(
+                            "cell {} has invalid candidte {} buddy {} has same value",
+                            cell, budy_v, buddy
+                        )));
+                    }
+                }
+            } else {
+                for buddy in get_cell_buddies(cell).iter() {
+                    let budy_v = self.values[buddy as usize];
+                    if budy_v == v {
+                        return Err(SudokuError::GridStateError(format!(
+                            "cells {},{} has same value {}",
+                            cell, budy_v, v
+                        )));
+                    }
+                    let candidate = self.pential_values[buddy as usize];
+                    if candidate.contains(v) {
+                        return Err(SudokuError::GridStateError(format!(
+                            "{} has invalid candidate  {}  cell {} has value {}",
+                            buddy, v, cell, v
+                        )));
+                    }
+                }
+            }
+        }
+        for h in 0_u8..27 {
+            let mut counter = [0; 10];
+            for cell in get_house_cell_set(h).iter() {
+                if self.values[cell as usize] != 0 {
+                    continue;
+                }
+                let candidate = self.pential_values[cell as usize];
+                for v in candidate.iter() {
+                    counter[v as usize] += 1;
+                }
+            }
+            counter[0] = 9;
+            if self.house_pential_count[h as usize] != counter {
+                return Err(SudokuError::GridStateError(format!(
+                    "house pential count error:{}",
+                    h
+                )));
+            }
+        }
+        Ok(())
+    }
 }
 
 #[derive(Debug)]
@@ -384,22 +478,120 @@ pub enum Difficulty {
     Extreme,
     INCOMPLETE,
 }
+impl Difficulty {
+    pub fn min_score(&self) -> u32 {
+        match self {
+            Difficulty::Easy => 400,
+            Difficulty::Medium => 800,
+            Difficulty::Hard => 1000,
+            Difficulty::UnFair => 1600,
+            Difficulty::Extreme => 2000,
+            Difficulty::INCOMPLETE => 2500,
+        }
+    }
+    pub fn max_score(&self) -> u32 {
+        match self {
+            Difficulty::Easy => 800,
+            Difficulty::Medium => 1000,
+            Difficulty::Hard => 1600,
+            Difficulty::UnFair => 2000,
+            Difficulty::Extreme => 2500,
+            Difficulty::INCOMPLETE => u32::MAX,
+        }
+    }
+}
 
 #[cfg(test)]
 mod test {
+    use crate::{
+        grid_constant::{get_cell_buddies, get_cell_house},
+        util::digitset::DigitSet,
+    };
+
     use super::Grid;
 
     #[test]
     fn test_grid_set_value() {
         let mut grid = Grid::default();
+        // set value
         let res = grid.set_value(0, 1, false);
         assert!(res);
-        let res = grid.set_value(1, 1, false);
-        assert_eq!(res, false);
-        let candidates = grid.get_cell_candidate(0).values();
-        assert!(candidates.is_empty());
-        let house_value_count = grid.get_house_pential_count(0, 1);
-        assert_eq!(house_value_count, 0);
+        assert_eq!(1, grid.get_value(0));
+        let mut buddy_candidates = DigitSet::new_full();
+        buddy_candidates.remove(1);
+        for buddy in get_cell_buddies(0).iter() {
+            assert_eq!(grid.get_cell_candidate(buddy), buddy_candidates);
+            let res = grid.set_value(buddy, 1, false);
+            assert_eq!(res, false);
+        }
+        for h in get_cell_house(0) {
+            assert_eq!(
+                grid.house_pential_count[h as usize],
+                [9, 0, 8, 8, 8, 8, 8, 8, 8, 8]
+            );
+        }
+        assert_eq!(grid.house_pential_count[1], [9, 6, 9, 9, 9, 9, 9, 9, 9, 9]);
+        assert_eq!(grid.house_pential_count[2], [9, 6, 9, 9, 9, 9, 9, 9, 9, 9]);
+        assert_eq!(grid.house_pential_count[3], [9, 8, 9, 9, 9, 9, 9, 9, 9, 9]);
+        assert_eq!(grid.house_pential_count[4], [9, 8, 9, 9, 9, 9, 9, 9, 9, 9]);
+        assert_eq!(grid.house_pential_count[5], [9, 8, 9, 9, 9, 9, 9, 9, 9, 9]);
+        assert_eq!(grid.house_pential_count[6], [9, 8, 9, 9, 9, 9, 9, 9, 9, 9]);
+        assert_eq!(grid.house_pential_count[7], [9, 8, 9, 9, 9, 9, 9, 9, 9, 9]);
+        assert_eq!(grid.house_pential_count[8], [9, 8, 9, 9, 9, 9, 9, 9, 9, 9]);
+        assert_eq!(grid.house_pential_count[10], [9, 6, 9, 9, 9, 9, 9, 9, 9, 9]);
+        assert_eq!(grid.house_pential_count[11], [9, 6, 9, 9, 9, 9, 9, 9, 9, 9]);
+        assert_eq!(grid.house_pential_count[12], [9, 8, 9, 9, 9, 9, 9, 9, 9, 9]);
+        assert_eq!(grid.house_pential_count[13], [9, 8, 9, 9, 9, 9, 9, 9, 9, 9]);
+        assert_eq!(grid.house_pential_count[14], [9, 8, 9, 9, 9, 9, 9, 9, 9, 9]);
+        assert_eq!(grid.house_pential_count[15], [9, 8, 9, 9, 9, 9, 9, 9, 9, 9]);
+        assert_eq!(grid.house_pential_count[16], [9, 8, 9, 9, 9, 9, 9, 9, 9, 9]);
+        assert_eq!(grid.house_pential_count[17], [9, 8, 9, 9, 9, 9, 9, 9, 9, 9]);
+        assert_eq!(grid.house_pential_count[19], [9, 6, 9, 9, 9, 9, 9, 9, 9, 9]);
+        assert_eq!(grid.house_pential_count[20], [9, 6, 9, 9, 9, 9, 9, 9, 9, 9]);
+        assert_eq!(grid.house_pential_count[21], [9, 6, 9, 9, 9, 9, 9, 9, 9, 9]);
+        assert_eq!(grid.house_pential_count[24], [9, 6, 9, 9, 9, 9, 9, 9, 9, 9]);
+        assert_eq!(grid.house_pential_count[22], [9, 9, 9, 9, 9, 9, 9, 9, 9, 9]);
+        assert_eq!(grid.house_pential_count[23], [9, 9, 9, 9, 9, 9, 9, 9, 9, 9]);
+        assert_eq!(grid.house_pential_count[25], [9, 9, 9, 9, 9, 9, 9, 9, 9, 9]);
+        assert_eq!(grid.house_pential_count[26], [9, 9, 9, 9, 9, 9, 9, 9, 9, 9]);
+
+        println!("{:?}", grid);
+
+        // replace value
+
+        let res = grid.set_value(0, 2, false);
+        assert!(res);
+        assert_eq!(2, grid.get_value(0));
+        let mut buddy_candidates = DigitSet::new_full();
+        buddy_candidates.remove(2);
+        for buddy in get_cell_buddies(0).iter() {
+            assert_eq!(grid.get_cell_candidate(buddy), buddy_candidates);
+        }
+        for h in get_cell_house(0) {
+            assert_eq!(
+                grid.house_pential_count[h as usize],
+                [9, 8, 0, 8, 8, 8, 8, 8, 8, 8]
+            );
+        }
+
+        assert_eq!(grid.house_pential_count[1], [9, 9, 6, 9, 9, 9, 9, 9, 9, 9]);
+        assert_eq!(grid.house_pential_count[3], [9, 9, 8, 9, 9, 9, 9, 9, 9, 9]);
+        assert_eq!(grid.house_pential_count[19], [9, 9, 6, 9, 9, 9, 9, 9, 9, 9]);
+
+        // delete value
+        let res = grid.set_value(0, 0, false);
+        assert!(res);
+        assert_eq!(0, grid.get_value(0));
+        let buddy_candidates = DigitSet::new_full();
+        for buddy in get_cell_buddies(0).iter() {
+            assert_eq!(grid.get_cell_candidate(buddy), buddy_candidates);
+        }
+        for h in get_cell_house(0) {
+            assert_eq!(
+                grid.house_pential_count[h as usize],
+                [9, 9, 9, 9, 9, 9, 9, 9, 9, 9]
+            );
+        }
     }
 
     #[test]
@@ -436,5 +628,11 @@ mod test {
         let grid = Grid::new_from_matrix_str(s).unwrap();
         assert_eq!(grid.values[51], 8);
         println!("{:?}", grid.get_cell_candidate(0).values());
+    }
+    #[test]
+    fn test_check_state_valid() {
+        let s = ":0100:5:984........+25...4...+1+9.+4..2..6.972+3...3+6.2...+2.+9.+3+5+61.+1+95+76+8+4+234+27+35189+6+63+8..97+5+1::537:";
+        let grid = Grid::new_from_hodoku_line(s).unwrap();
+        grid.check_state_valid().unwrap();
     }
 }

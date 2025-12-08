@@ -81,16 +81,17 @@ impl LockedCandidateFinder {
                         if rows.len() == 1 {
                             let common_house = rows.iter().next().unwrap();
                             if grid.get_house_pential_count(*common_house, value) > pc {
-                                let step = self.create_locked_step(
+                                if let Some(step) = self.create_locked_step(
                                     grid,
                                     cells.as_slice(),
                                     house,
                                     common_house,
                                     value,
                                     LockedCandidateType::Pointing,
-                                );
-                                if acc.add_step(Step::LockedCandidate(step)) {
-                                    return;
+                                ) {
+                                    if acc.add_step(Step::LockedCandidate(step)) {
+                                        return;
+                                    }
                                 }
                             }
                         } else {
@@ -98,17 +99,17 @@ impl LockedCandidateFinder {
                             if cols.len() == 1 {
                                 let common_house = cols.iter().next().unwrap();
                                 if grid.get_house_pential_count(*common_house, value) > pc {
-                                    let step = self.create_locked_step(
+                                    if let Some(step) = self.create_locked_step(
                                         grid,
                                         cells.as_slice(),
                                         house,
                                         common_house,
                                         value,
                                         LockedCandidateType::Pointing,
-                                    );
-
-                                    if acc.add_step(Step::LockedCandidate(step)) {
-                                        return;
+                                    ) {
+                                        if acc.add_step(Step::LockedCandidate(step)) {
+                                            return;
+                                        }
                                     }
                                 }
                             }
@@ -119,16 +120,17 @@ impl LockedCandidateFinder {
                         if blocks.len() == 1 {
                             let common_house = blocks.iter().next().unwrap();
                             if grid.get_house_pential_count(*common_house, value) > pc {
-                                let step = self.create_locked_step(
+                                if let Some(step) = self.create_locked_step(
                                     grid,
                                     cells.as_slice(),
                                     house,
                                     common_house,
                                     value,
                                     LockedCandidateType::Claiming,
-                                );
-                                if acc.add_step(Step::LockedCandidate(step)) {
-                                    return;
+                                ) {
+                                    if acc.add_step(Step::LockedCandidate(step)) {
+                                        return;
+                                    }
                                 }
                             }
                         }
@@ -145,7 +147,7 @@ impl LockedCandidateFinder {
         common_house: &u8,
         value: u8,
         candidate_type: LockedCandidateType,
-    ) -> LockedCandidate {
+    ) -> Option<LockedCandidate> {
         let highlight_candidates: Vec<Candidate> = cells
             .iter()
             .map(|cell| Candidate::new(*cell, value))
@@ -159,12 +161,16 @@ impl LockedCandidateFinder {
         let remove_candidates: Vec<Candidate> = remove_cells
             .map(|cell| Candidate::new(cell, value))
             .collect();
-        return LockedCandidate::new(
-            remove_candidates,
-            highlight_candidates,
-            candidate_type,
-            house,
-        );
+        if remove_candidates.is_empty() {
+            None
+        } else {
+            Some(LockedCandidate::new(
+                remove_candidates,
+                highlight_candidates,
+                candidate_type,
+                house,
+            ))
+        }
     }
 }
 

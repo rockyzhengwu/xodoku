@@ -20,7 +20,7 @@ fn test_all_finder() {
         .map(|c| c.to_digit(10).unwrap() as u8)
         .collect();
     let strategies: Vec<Box<dyn SolverStrategy>> = vec![
-        Box::new(full_house::FullHOuseFinder::default()),
+        Box::new(full_house::FullHouseFinder::default()),
         Box::new(naked_single::NakedSingleFinder::default()),
         Box::new(hidden_single::HiddenSingleFinder::default()),
         Box::new(naked_set::NakedSetFinder::new(2)),

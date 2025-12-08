@@ -16,7 +16,8 @@ impl NakedSingle {
         Self { candidate }
     }
     pub fn apply(&self, grid: &mut Grid) {
-        grid.set_value_with_candidate(&self.candidate);
+        let res = grid.set_value_with_candidate(&self.candidate);
+        assert!(res)
     }
     pub fn explain(&self) -> String {
         format!(
