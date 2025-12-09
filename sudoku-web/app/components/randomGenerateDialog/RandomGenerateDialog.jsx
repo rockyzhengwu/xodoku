@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
-import { Modal, Button, Group, Select } from "@mantine/core";
+import { Modal, Button, Group, Select, Tooltip } from "@mantine/core";
 
 export default function RandomGenerateDialog({ onInput }) {
   const [opened, { open, close, toggle }] = useDisclosure(false);
@@ -23,9 +23,11 @@ export default function RandomGenerateDialog({ onInput }) {
 
   return (
     <>
-      <Button onClick={toggle} size="md">
-        Generate Sudoku
-      </Button>
+      <Tooltip label="Generate a random sudoku">
+        <Button onClick={toggle} size="md">
+          Generate
+        </Button>
+      </Tooltip>
       <Modal
         opened={opened}
         onClose={handleClose}

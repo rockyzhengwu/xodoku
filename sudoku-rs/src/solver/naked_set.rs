@@ -3,7 +3,7 @@ use crate::{
     grid::{Grid, HouseType},
     grid_constant::{block, col, row},
     solver::{SolverStrategy, step::Step, step_accumulator::StepAccumulator},
-    util::{create_permutations, digitset::DigitSet, format_cell, format_house},
+    util::{create_permutations, digitset::DigitSet, format_candidates, format_house},
 };
 use std::collections::HashSet;
 
@@ -56,20 +56,6 @@ impl NakedSet {
             }
         }
     }
-    fn format_cells(&self) -> String {
-        let mut res = String::new();
-        let cells: HashSet<u8> = self.highlight_candidates.iter().map(|c| c.cell()).collect();
-        let mut sorted_cells: Vec<u8> = cells.into_iter().collect();
-        sorted_cells.sort();
-        for (i, cell) in sorted_cells.iter().enumerate() {
-            if i < sorted_cells.len() - 1 {
-                res.push_str(format!("<b>{}</b>,", format_cell(*cell)).as_str())
-            } else {
-                res.push_str(format!("<b>{}</b>", format_cell(*cell)).as_str())
-            }
-        }
-        res
-    }
     fn format_values(&self) -> String {
         let mut res = String::new();
         let values: HashSet<u8> = self
@@ -94,11 +80,11 @@ impl NakedSet {
             format!(
                 "<h3>{}</h3> <p> cells {} are both in the house <b>{}</b> and have candidates <b>{}</b>.one of the cells has to be <b>{}</b>  the other see {} same time can't be {} in <b>{}</b></p>",
                 self.name(),
-                self.format_cells(),
+                format_candidates(self.highlight_candidates.as_slice()),
                 format_house(self.house),
                 self.format_values(),
                 self.format_values(),
-                self.format_cells(),
+                format_candidates(self.highlight_candidates.as_slice()),
                 self.format_values(),
                 format_house(self.house)
             )
@@ -106,12 +92,12 @@ impl NakedSet {
             format!(
                 "<h3>{}</h3> <p> cells {} are both in the house <b>{}</b> and <b>{}</b> have candidates <b>{}</b>.one of the cells has to be <b>{}</b> ,  the other see {} same time can't be {} in <b>{}</b> and<b>{}</b></p>",
                 self.name(),
-                self.format_cells(),
+                format_candidates(self.highlight_candidates.as_slice()),
                 format_house(self.house),
                 format_house(self.locked_house),
                 self.format_values(),
                 self.format_values(),
-                self.format_cells(),
+                format_candidates(self.highlight_candidates.as_slice()),
                 self.format_values(),
                 format_house(self.house),
                 format_house(self.locked_house)

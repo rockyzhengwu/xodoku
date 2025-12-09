@@ -5,6 +5,7 @@ use crate::{
     grid::{Grid, HouseType},
     grid_constant::{block, col, get_house_cell_set, row},
     solver::{SolverStrategy, StepAccumulator, step::Step},
+    util::{format_candidates, format_house},
 };
 
 #[derive(Debug, Clone, PartialEq, Hash, Eq)]
@@ -12,6 +13,7 @@ pub struct LockedCandidate {
     pub remove_candidates: Vec<Candidate>,
     pub highlight_candidates: Vec<Candidate>,
     pub candidate_type: LockedCandidateType,
+    pub common_house: u8,
     pub house: u8,
 }
 
@@ -20,12 +22,14 @@ impl LockedCandidate {
         remove_candidates: Vec<Candidate>,
         highlight_candidates: Vec<Candidate>,
         candidate_type: LockedCandidateType,
+        common_house: u8,
         house: u8,
     ) -> Self {
         Self {
             remove_candidates,
             highlight_candidates,
             candidate_type,
+            common_house,
             house,
         }
     }
@@ -40,6 +44,25 @@ impl LockedCandidate {
         for cand in self.remove_candidates.iter() {
             grid.remvoe_candidate(cand);
         }
+    }
+    pub fn name(&self) -> &str {
+        match self.candidate_type {
+            LockedCandidateType::Pointing => "LockedCandidateType1(Pointing)",
+            LockedCandidateType::Claiming => "LockedCandidateType2(Claiming)",
+        }
+    }
+
+    pub fn explain(&self) -> String {
+        let digit = self.highlight_candidates.first().unwrap().value();
+        format!(
+            "<h3>{}</h3> in {},digit {} can only  go into {} cells {}, {} can removed",
+            self.name(),
+            format_house(self.house),
+            digit,
+            format_house(self.common_house),
+            format_candidates(self.highlight_candidates.as_slice()),
+            format_candidates(self.remove_candidates.as_slice()),
+        )
     }
 }
 
@@ -168,6 +191,7 @@ impl LockedCandidateFinder {
                 remove_candidates,
                 highlight_candidates,
                 candidate_type,
+                *common_house,
                 house,
             ))
         }
@@ -219,6 +243,8 @@ mod test {
         finder.find_step(&grid, &mut acc);
         let steps = acc.get_steps();
         assert_eq!(steps.len(), 2);
+        let first = steps.iter().next().unwrap();
+        println!("{}", first.explain());
     }
 
     #[test]
@@ -237,6 +263,7 @@ mod test {
                 vec![Candidate::new(19, 7)],
                 vec![Candidate::new(10, 7), Candidate::new(11, 7)],
                 LockedCandidateType::Claiming,
+                18,
                 1
             ))
         );

@@ -21,7 +21,8 @@ impl NakedSingle {
     }
     pub fn explain(&self) -> String {
         format!(
-            "<p>cell <b>{}</b> last possiable candidate is <b>{}</b></p>",
+            "<h3>{}</h3> <p>cell <b>{}</b> last possiable candidate is <b>{}</b></p>",
+            "Naked Single",
             format_cell(self.candidate.cell()),
             self.candidate.value()
         )

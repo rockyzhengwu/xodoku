@@ -9,3 +9,11 @@
 .controlButton {
   background-color: var(--vm-background-color);
 }
+
+.gridFooter {
+  display: flex;
+  flex-direction: row;
+  align-items: start;
+  justify-content: start;
+  gap: 20px;
+}

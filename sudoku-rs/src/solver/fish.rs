@@ -88,17 +88,15 @@ impl Fish {
             FishType::SashimiJellyFish => "Sashimi Jellyfish",
         }
     }
+    pub fn explain(&self) -> String {
+        format!("<h3>{}</h3>", self.name())
+    }
 }
 
 pub struct FishFinder {
     fish_type: FishType,
 }
 
-// basic set 中多出来的不再 cover set 里的是 fin，一次有且只能在 一个 basic house
-// 出现，且必须在同一个 block, 里
-//
-// 每一个 cover house 必须和 至少两个 baseic 有交集，才能成为一个 fish ,或者 一个 finned fish,
-// 如果有一个 cover 只和一个basic 有交集，但缺少的那个 block 有 fin 也可以组成 sashimi
 impl FishFinder {
     pub fn new(fish_type: FishType) -> Self {
         Self { fish_type }

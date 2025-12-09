@@ -4,6 +4,8 @@ import DigitBoard from "../../components/digitboard/DigitBoard.jsx";
 import PmBoard from "../../components/pmboard/PmBoard.jsx";
 import ColorBoard from "../../components/colorBoard/ColorBoard.jsx";
 import { undoStack, redoStack } from "../player/PlayerHistory.js";
+import RandomGenerateDialog from "../../components/randomGenerateDialog/RandomGenerateDialog.jsx";
+import Timer from "../../components/timer/Timer.jsx";
 
 import {
   Stack,
@@ -39,6 +41,10 @@ import {
   autoPmsAtom,
   modeAtom,
   nextStepAtom,
+  sudokuSolutionAtom,
+  usedSecondsAtom,
+  initCellsSudoku,
+  timerRuningAtom,
 } from "../../atom/PlayerAtoms.js";
 import {
   DeleteCommand,
@@ -54,6 +60,7 @@ import { useAtom } from "jotai";
 
 import styles from "./PlayerControl.module.css";
 import { computePms, isSolved } from "../../lib/sudoku_util.js";
+import PlayerActions from "../playerActions/PlayerActions.jsx";
 
 const toolTipText = {
   digit: "Enter a digit",
@@ -72,7 +79,22 @@ export default function PlayerControl({}) {
   const [sudokuCells, setSudokuCells] = useAtom(sudokuCellsAtom);
   const [selectedCell] = useAtom(selectedCellAtom);
   const [nextStep, setNextStep] = useAtom(nextStepAtom);
+  const [sudokuSolution, setSudokuSolution] = useAtom(sudokuSolutionAtom);
+  const [usedSeconds, setUsedSeconds] = useAtom(usedSecondsAtom);
 
+  const [timerRuning, setTimerRuning] = useAtom(timerRuningAtom);
+
+  const gerateRandomSudoku = (difficulty_level) => {
+    setUsedSeconds(0);
+    if (rust) {
+      const sudokuResult = rust.generate_sudoku(difficulty_level);
+      const cells = initCellsSudoku(sudokuResult);
+      setNextStep(null);
+      setSudokuSolution(sudokuResult.solutions);
+      setSudokuCells(cells);
+      setTimerRuning(true);
+    }
+  };
   const handleModeChange = (mode) => {
     setMode(mode);
   };
@@ -370,11 +392,15 @@ export default function PlayerControl({}) {
             labelPosition="left"
           />
         </Group>
-        <div
-          dangerouslySetInnerHTML={{
-            __html: nextStep ? nextStep.explain : "",
-          }}
-        ></div>
+        <Group>
+          <Timer />
+          <RandomGenerateDialog onInput={gerateRandomSudoku} />
+          <PlayerActions />
+        </Group>
+
+        <div className={styles.gridFooter}>
+          <div className={styles.timer}></div>
+        </div>
       </Stack>
     </>
   );
