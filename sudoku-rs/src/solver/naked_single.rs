@@ -2,7 +2,7 @@ use crate::{
     candidate::Candidate,
     grid::Grid,
     solver::{SolverStrategy, step::Step, step_accumulator::StepAccumulator},
-    util::format_cell,
+    util::format_step::format_cell,
 };
 
 #[derive(Debug, PartialEq, Clone, Hash, Eq)]

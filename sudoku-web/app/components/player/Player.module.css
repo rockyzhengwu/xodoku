@@ -5,7 +5,7 @@
 }
 
 .digitGrid {
-  min-width: 600px;
+  min-width: 500px;
 }
 
 .digitGrid:focus {
@@ -15,8 +15,7 @@
 .playerControl {
   background-color: var(--vm-background-color);
   border-radius: 8px;
-  margin-left: 20px;
-  min-width: 350px;
+  min-width: 250px;
 }
 
 @media (max-width: 768px) {

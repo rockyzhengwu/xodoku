@@ -67,12 +67,12 @@ impl RemotePairFinder {
                 is_added = true;
                 queue.push_back(chain);
             }
-            if !is_added && current_chain.len() >= 4 {
+            if !is_added && current_chain.cells_num() >= 4 {
                 let cands = grid.get_cell_candidate(current_chain.inferences[0].start.cell());
                 let mut remove_candidates = Vec::new();
                 for p1 in 0..current_chain.len() {
                     for p2 in (p1 + 1)..current_chain.len() {
-                        if p2 >= p1 + 3 && p2 % 2 != 0 {
+                        if p2 >= p1 + 2 && (p2 + 1) % 2 != 0 {
                             let p1_inference = &current_chain.inferences[p1];
                             let p2_inference = &current_chain.inferences[p2];
                             let common_buddies = get_cell_buddies(p1_inference.start.cell())
@@ -84,6 +84,7 @@ impl RemotePairFinder {
                                 .iter()
                                 .filter(|c| {
                                     !grid.get_cell_candidate(*c).intersect(&cands).is_empty()
+                                        && !used.contains(c)
                                 })
                                 .collect();
                             if remove_cells.is_empty() {
@@ -151,11 +152,25 @@ mod test {
 | 4  1  29 | 28  7    5  | 2389  6   2389 |
 | 3  8  29 | 4   29   6  | 1     7   5    |
 '----------'-------------'----------------'"#;
+        let s = r#". ------------ . ---------- . ---------- .
+| 7   9    8   | 4    5  2  | 3    1  6  |
+| 6   45   3   | 7    8  1  | 45   9  2  |
+| 45  1    2   | 69   3  69 | 8    7  45 |
+: ------------ | ---------- | ---------- |
+| 3   7    19  | 2    6  5  | 19   4  8  |
+| 8   2    59  | 1    4  3  | 7    6  59 |
+| 45  6    145 | 8    9  7  | 15   2  3  |
+: ------------ | ---------- | ---------- |
+| 9   8    56  | 56   1  4  | 2    3  7  |
+| 1   34   7   | 369  2  8  | 469  5  49 |
+| 2   345  456 | 35   7  69 | 469  8  1  |
+. ------------ . ---------- . ---------- ."#;
         let grid = Grid::new_from_matrix_str(s).unwrap();
         let solver = RemotePairFinder::default();
         let mut acc = AllStepAccumulator::default();
         solver.find_step(&grid, &mut acc);
         let steps = acc.get_steps();
+        println!("{:?}", steps.len());
         for step in steps.iter() {
             println!("{:?}", step);
         }

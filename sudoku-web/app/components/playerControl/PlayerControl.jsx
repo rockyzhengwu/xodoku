@@ -230,7 +230,10 @@ export default function PlayerControl({}) {
     const pms = sudokuCells.map((cell) => {
       return cell.pms.join("");
     });
-    const request = { pms: pms, digits: digitStr };
+    const is_given = sudokuCells.map((cell) => {
+      return cell.isGiven;
+    });
+    const request = { pms: pms, digits: digitStr, is_given: is_given };
     const step = rust.get_next_step(request);
     console.log("NextHint:", step);
     setNextStep(step);

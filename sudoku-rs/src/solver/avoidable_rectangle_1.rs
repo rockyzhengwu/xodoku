@@ -56,6 +56,19 @@ impl AvoidableRectangleType1Finder {
                 if empty_cells.len() != 1 {
                     continue;
                 }
+                let mut other_is_not_given = true;
+                for c in cells.iter() {
+                    if empty_cells.contains(c) {
+                        continue;
+                    }
+                    if grid.cell_is_given(*c) {
+                        other_is_not_given = false;
+                        break;
+                    }
+                }
+                if !other_is_not_given {
+                    continue;
+                }
                 let empty_cell = empty_cells[0];
                 let mut filled_values: HashMap<u8, u8> = HashMap::new();
                 for c in cells.iter() {

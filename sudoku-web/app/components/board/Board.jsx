@@ -48,7 +48,7 @@ export default function Board({
         viewBox="0 0 940 940"
         version="1.1"
         xmlns="http://www.w3.org/2000/svg"
-        width="100%"
+        width="95%"
         className={styles["board"]}
       >
         <defs>

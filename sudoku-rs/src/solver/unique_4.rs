@@ -78,10 +78,16 @@ impl Unique4Finder {
                 } else if pential_cells_a.is_empty() && !pential_cells_b.is_empty() {
                     let remove_candidates =
                         vec![Candidate::new(first, b), Candidate::new(second, b)];
+                    let highlight_candidates: Vec<Candidate> = ur
+                        .candidates()
+                        .iter()
+                        .filter(|cand| !remove_candidates.contains(cand))
+                        .copied()
+                        .collect();
 
                     let ur4 = UniqueStep {
                         remove_candidates,
-                        highlight_candidates: ur.candidates(),
+                        highlight_candidates,
                         unique_type: UniqueType::Type4,
                         fin_candidates: Vec::new(),
                     };

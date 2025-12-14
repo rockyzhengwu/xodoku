@@ -42,35 +42,28 @@ const StepNode = ({ index, text, color }) => {
   );
 };
 
-const SingleValueStep = (step) => {
-  let candidate = step.set_values[0];
-  const index = candidate.cell;
-  const pm = candidate.value;
-  return <StepNode index={index} text={pm} color={StepHintValueColor} />;
-};
-
 const ChainLine = (step) => {
-  const chain = step.chain;
   const lines = [];
+  const edges = step.lines;
   const linePosition = [];
   const edgeTypes = [];
-  for (const node of chain) {
-    const from = node.link.from;
-    const to = node.link.to;
-    if (from.cell === to.cell) {
+  for (const edge of edges) {
+    const from = edge.from;
+    const to = edge.to;
+    const edgeType = edge.edge_type;
+    if (from.cell === to.cell && from.value == to.value) {
       continue;
     }
-    const fromPos = pmPosition(from.cell, from.candidate);
-    const toPos = pmPosition(to.cell, to.candidate);
-    edgeTypes.push(node.inference_type);
+    const fromPos = pmPosition(from.cell, from.value);
+    const toPos = pmPosition(to.cell, to.value);
+    edgeTypes.push(edgeType);
     linePosition.push([fromPos, toPos]);
   }
 
-  const deletePosition = step.delete_candidates.map((cand) => {
-    const pos = pmPosition(cand[0], cand[1]);
+  const deletePosition = step.remove_candidates.map((cand) => {
+    const pos = pmPosition(cand.cell, cand.value);
     return pos;
   });
-
   for (let i = 0; i < linePosition.length; i++) {
     const inference_type = edgeTypes[i];
     const fromPos = linePosition[i][0];
@@ -99,6 +92,74 @@ const ChainLine = (step) => {
   return lines;
 };
 
+const ChainStep = (step) => {
+  const edges = step.lines;
+  const stepNodes = [];
+  let lastEnd = null;
+  for (let i = 0; i < edges.length; i++) {
+    const edge = edges[i];
+    const from = edge.from;
+    const to = edge.to;
+    if (!lastEnd || lastEnd.cell != from.cell || lastEnd.value != from.value) {
+      if (edge.edge_type === "Strong") {
+        stepNodes.push(
+          <StepNode
+            key={`chain-start-${i}`}
+            index={from.cell}
+            text={from.value}
+            color={StepFinColor}
+          />,
+        );
+      } else {
+        stepNodes.push(
+          <StepNode
+            key={`chain-start-${i}`}
+            index={from.cell}
+            text={from.value}
+            color={StepHintValueColor}
+          />,
+        );
+      }
+    }
+    lastEnd = to;
+    if (edge.edge_type === "Strong") {
+      stepNodes.push(
+        <StepNode
+          key={`chain-end-${i}`}
+          index={to.cell}
+          text={to.value}
+          color={StepHintValueColor}
+        />,
+      );
+    } else {
+      stepNodes.push(
+        <StepNode
+          key={`chain-end-${i}`}
+          index={to.cell}
+          text={to.value}
+          color={StepFinColor}
+        />,
+      );
+    }
+  }
+
+  const remove_candidates = step.remove_candidates;
+  const deleteNodes = remove_candidates.map((cand) => {
+    return (
+      <StepNode
+        key={`delete-${cand.cell}${cand.value}`}
+        index={cand.cell}
+        text={cand.value}
+        color={`#${cand.color.toString(16)}`}
+      />
+    );
+  });
+  const chainLines = ChainLine(step);
+
+  const allNodes = stepNodes.concat(deleteNodes).concat(chainLines);
+  return <>{allNodes}</>;
+};
+
 export default function Step() {
   const [nextStep, setNextStep] = useAtom(nextStepAtom);
   const [sudokuCells, setSudokuCells] = useAtom(sudokuCellsAtom);
@@ -117,6 +178,18 @@ export default function Step() {
         message: "Can't find next step",
       });
       return false;
+    }
+    if (
+      stepName === "Remote Pair" ||
+      stepName === "AIC Type1" ||
+      stepName === "AIC Type2" ||
+      stepName === "X-Chain" ||
+      stepName === "XY-Chain" ||
+      stepName === "DisContinuous Nice Loop" ||
+      stepName === "Continuous Nice Loop"
+    ) {
+      let chainStep = ChainStep(nextStep);
+      return chainStep;
     }
     const setNodes = nextStep.set_values.map((cand, index) => {
       return (

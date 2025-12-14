@@ -1,3 +1,4 @@
+use rand::rand_core::block;
 use serde::{Deserialize, Serialize};
 
 use sudoku_rs::{
@@ -5,7 +6,7 @@ use sudoku_rs::{
     generator::generate,
     grid::{Difficulty, Grid},
     solution::SolutionState,
-    solver::{SimpleSolver, brute_force::BruteForceSolver, step::Step},
+    solver::{SimpleSolver, brute_force::BruteForceSolver, chain::link::InferenceType, step::Step},
 };
 use web_sys::console;
 
@@ -25,11 +26,13 @@ pub struct SudokuResult {
     solutions: Vec<u8>,
     pms: Vec<String>,
     score: u32,
+    is_given: Vec<bool>,
 }
 #[derive(Serialize, Deserialize, Debug)]
 pub struct HintRequest {
     digits: String,
     pms: Vec<String>,
+    is_given: Vec<bool>,
 }
 
 #[derive(Debug, Clone, Copy, Deserialize, Serialize)]
@@ -42,6 +45,9 @@ pub struct FrontCandidate {
 static REMOVE_CANDIDATE_COLOR: u32 = 0xff7684;
 static GREEN_CANDADITE_COLOR: u32 = 0x3fda65;
 static FIN_CANDIDATE_COLOR: u32 = 0x7fbbff;
+static PURPLE_CANDIDATE: u32 = 0xd8b2ff;
+static OTHER_CANDIDATE: u32 = 0xa6ede3;
+
 impl FrontCandidate {
     pub fn new(cell: u8, value: u8, color: u32) -> Self {
         FrontCandidate { cell, value, color }
@@ -51,9 +57,18 @@ impl FrontCandidate {
         FrontCandidate::new(candidate.cell(), candidate.value(), color)
     }
 }
+#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
+pub enum EdgeType {
+    Strong,
+    Weak,
+}
 
 #[derive(Debug, Clone, Copy, Deserialize, Serialize)]
-pub struct Edge(FrontCandidate, FrontCandidate);
+pub struct Edge {
+    from: FrontCandidate,
+    to: FrontCandidate,
+    edge_type: EdgeType,
+}
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Hint {
@@ -79,6 +94,12 @@ fn new_green_candidates(cands: &[Candidate]) -> Vec<FrontCandidate> {
 }
 fn new_fin_candidates(cands: &[Candidate]) -> Vec<FrontCandidate> {
     candidates_to_frontcandidates(cands, FIN_CANDIDATE_COLOR)
+}
+fn new_purple_candidates(cands: &[Candidate]) -> Vec<FrontCandidate> {
+    candidates_to_frontcandidates(cands, PURPLE_CANDIDATE)
+}
+fn new_other_candidates(cands: &[Candidate]) -> Vec<FrontCandidate> {
+    candidates_to_frontcandidates(cands, OTHER_CANDIDATE)
 }
 
 impl Hint {
@@ -208,10 +229,37 @@ impl Hint {
             }
             Step::SueDeCoq(sdc) => {
                 hint.remove_candidates = new_remove_candidates(&sdc.remove_candidates);
+                hint.highlight_candidates = new_purple_candidates(&sdc.row_col_candidates);
+                let block_candidates = new_fin_candidates(&sdc.block_candidates);
+                hint.highlight_candidates
+                    .extend_from_slice(block_candidates.as_slice());
+                hint.highlight_candidates
+                    .extend_from_slice(new_other_candidates(&sdc.other_candidates).as_slice());
                 hint
             }
             Step::Chain(chain) => {
                 hint.remove_candidates = new_remove_candidates(&chain.remove_candidates);
+                let mut edges = Vec::new();
+                for inf in chain.chain.inferences.iter() {
+                    let from = FrontCandidate::new(
+                        inf.start.cell(),
+                        inf.start.value(),
+                        FIN_CANDIDATE_COLOR,
+                    );
+                    let to =
+                        FrontCandidate::new(inf.end.cell(), inf.end.value(), FIN_CANDIDATE_COLOR);
+                    let edge_type = match inf.inference_type {
+                        InferenceType::Strong => EdgeType::Strong,
+                        InferenceType::Weak => EdgeType::Weak,
+                    };
+                    let edge = Edge {
+                        from: from,
+                        to,
+                        edge_type,
+                    };
+                    edges.push(edge);
+                }
+                hint.lines = edges;
                 hint
             }
         }
@@ -241,6 +289,7 @@ pub fn generate_sudoku(difficulty_level: String) -> Result<JsValue, JsValue> {
             let digits = grid.values().to_vec();
             let solutions = generate_grid.solution.to_vec();
             let mut pms = Vec::new();
+            let is_given = grid.is_given().to_owned().to_vec();
             for cell in 0_u8..81 {
                 if grid.get_value(cell) != 0 {
                     pms.push("".to_string());
@@ -254,6 +303,7 @@ pub fn generate_sudoku(difficulty_level: String) -> Result<JsValue, JsValue> {
                 solutions,
                 pms,
                 score: generate_grid.score,
+                is_given,
             };
             let jsvalue = serde_wasm_bindgen::to_value(&sudoku_result).unwrap();
             return Ok(jsvalue);
@@ -272,7 +322,7 @@ fn create_grid_from_str(digits: &str) -> Result<Grid, SudokuError> {
         return Grid::new_from_singline_digit(text).map_err(|_e| SudokuError::InvalidInput);
     }
     if count > 9 {
-        return Grid::new_from_matrix_str(text).map_err(|_| SudokuError::InvalidInput);
+        return Grid::new_from_matrix_str(text).map_err(|_e| SudokuError::InvalidInput);
     }
     Err(SudokuError::InvalidInput)
 }
@@ -302,6 +352,7 @@ pub fn import_sudoku(text: &str) -> Result<JsValue, JsValue> {
         let mut pms = Vec::new();
         let solver = BruteForceSolver::new();
         let solution = solver.solve(&grid);
+        web_sys::console::log_1(&format!(",state:{:?}", solution.state()).into());
         match solution.state() {
             SolutionState::NoSolution => {
                 let err = serde_wasm_bindgen::to_value(&SudokuError::NotUniqueSolution).unwrap();
@@ -321,12 +372,13 @@ pub fn import_sudoku(text: &str) -> Result<JsValue, JsValue> {
                         pms.push("".to_string());
                     }
                 }
-                // TODO calc sudoku score
+                let is_given: Vec<bool> = grid.values().iter().map(|v| v != &0).collect();
                 let sudoku_result = SudokuResult {
                     digits: grid.values().to_vec(),
                     pms: pms,
                     solutions: solution.values().to_vec(),
                     score: 0,
+                    is_given,
                 };
                 if let Ok(r) = serde_wasm_bindgen::to_value(&sudoku_result) {
                     return Ok(r);
@@ -374,18 +426,22 @@ pub fn solve_backtracing(digits: &str) -> Result<JsValue, JsValue> {
 #[wasm_bindgen]
 pub fn get_next_step(request: JsValue) -> Result<JsValue, JsValue> {
     let hint_request: HintRequest = serde_wasm_bindgen::from_value(request)?;
-    //web_sys::console::log_1(&format!("digits:{:?}", hint_request.digits.chars()).into());
     let digits: Vec<u8> = hint_request
         .digits
         .chars()
         .map(|v| v.to_digit(10).unwrap() as u8)
         .collect();
+    web_sys::console::log_1(&format!("digits:{:?}", digits).into());
     let mut pms = Vec::new();
     for pm in hint_request.pms {
         let cpm: Vec<u8> = pm.chars().map(|v| v.to_digit(10).unwrap() as u8).collect();
         pms.push(cpm);
     }
-    if let Ok(grid) = Grid::new_from_digit_and_pms(digits.as_slice(), pms) {
+
+    web_sys::console::log_1(&format!("pms:{:?}", pms).into());
+    let is_given = hint_request.is_given;
+    if let Ok(grid) = Grid::new_from_digit_and_pms(digits.as_slice(), pms, is_given) {
+        web_sys::console::log_1(&format!("Grid{:?}", grid).into());
         let solver = SimpleSolver::new();
         let step = solver.hint(&grid);
         let hint = Hint::new_from_step(&step);

@@ -59,10 +59,12 @@ export function initCellsSudoku(sudoku) {
   const digits = sudoku.digits;
   const pms = sudoku.pms;
   const cells = [];
+  let is_given = sudoku.is_given;
   for (let i = 0; i < 81; i++) {
     const digit = digits[i].toString();
     let pm = pms[i].split("");
-    const cell = newCell(i, digit, pm, digit != "0");
+    let given = is_given[i];
+    const cell = newCell(i, digit, pm, given);
     cells.push(cell);
   }
 

@@ -128,6 +128,9 @@ impl EmptyRectangleFinder {
                             continue;
                         }
                         let remove_cell = cell_index(cr, c);
+                        if block_cells.contains(remove_cell) {
+                            continue;
+                        }
                         if grid.cell_has_candidate(remove_cell, value) {
                             let remove_candidates = vec![Candidate::new(remove_cell, value)];
                             let highlight_candidates: Vec<Candidate> = conject_cells
@@ -164,6 +167,9 @@ impl EmptyRectangleFinder {
                             continue;
                         }
                         let remove_cell = cell_index(r, cc);
+                        if block_cells.contains(remove_cell) {
+                            continue;
+                        }
                         if grid.cell_has_candidate(remove_cell, value) {
                             let remove_candidates = vec![Candidate::new(remove_cell, value)];
                             let highlight_candidates: Vec<Candidate> = conject_cells

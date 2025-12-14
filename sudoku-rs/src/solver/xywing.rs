@@ -75,13 +75,15 @@ impl XYWingFinder {
                     let remove_cells: Vec<u8> = get_cell_buddies(p1_cell)
                         .intersect(&get_cell_buddies(p2_cell))
                         .iter()
-                        .filter(|c| grid.get_cell_candidate(*c).contains(z))
+                        .filter(|c| grid.cell_has_candidate(*c, z))
                         .collect();
+
                     if remove_cells.is_empty() {
                         continue;
                     }
                     let remove_candidates: Vec<Candidate> =
                         remove_cells.iter().map(|c| Candidate::new(*c, z)).collect();
+
                     let mut highlight_candidates =
                         vec![Candidate::new(pivot, x), Candidate::new(pivot, y)];
                     if p1_candidate.contains(x) {
@@ -148,5 +150,28 @@ mod test {
         solver.find_step(&grid, &mut acc);
         let steps = acc.get_steps();
         assert_eq!(steps.len(), 3);
+    }
+    #[test]
+    fn test_xywing_more() {
+        let s = r#". -------------- . ----------- . ---------------- .
+| 3      79   4  | 5    2  16  | 169   8    1679  |
+| 127    278  6  | 348  9  13  | 1245  157  1247  |
+| 1289   5    12 | 48   7  68  | 3     19   12469 |
+: -------------- | ----------- | ---------------- |
+| 1457   47   57 | 6    8  9   | 15    2    3     |
+| 12589  289  12 | 7    3  4   | 5689  159  169   |
+| 89     6    3  | 1    5  2   | 7     4    89    |
+: -------------- | ----------- | ---------------- |
+| 2457   1    57 | 9    6  358 | 248   37   2478  |
+| 257    237  9  | 38   4  58  | 128   6    1278  |
+| 6      34   8  | 2    1  7   | 49    39   5     |
+. -------------- . ----------- . ---------------- ."#;
+        let grid = Grid::new_from_matrix_str(s).unwrap();
+        println!("candidates:,{:?}", grid.get_cell_candidate(80));
+        let solver = XYWingFinder::default();
+        let mut acc = AllStepAccumulator::default();
+        solver.find_step(&grid, &mut acc);
+        let steps = acc.get_steps();
+        println!("{:?}", steps);
     }
 }

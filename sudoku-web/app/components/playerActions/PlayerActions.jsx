@@ -153,17 +153,17 @@ export default function PlayerActions() {
     modals.closeAll();
     try {
       const sudoku = await rust.import_sudoku(text);
-      console.log(sudoku);
       const cells = initCellsSudoku(sudoku);
       setSudokuSolution(sudoku.solutions);
       setSudokuCells(cells);
       setTimerRuning(true);
       setNextStep(null);
     } catch (error) {
+      console.log(error);
       notifications.show({
         color: "red",
         title: "Invalid Sudoku",
-        message: "Invalid input",
+        message: error,
       });
     }
   };

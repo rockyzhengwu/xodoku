@@ -50,9 +50,15 @@ impl Unique1Finder {
                 Candidate::new(remove_cell, a),
                 Candidate::new(remove_cell, b),
             ];
+            let highlight_candidates: Vec<Candidate> = ur
+                .candidates()
+                .iter()
+                .filter(|c| !remove_candidates.contains(c))
+                .copied()
+                .collect();
             let ur1 = UniqueStep {
                 remove_candidates,
-                highlight_candidates: ur.candidates(),
+                highlight_candidates,
                 unique_type: UniqueType::Type1,
                 fin_candidates: Vec::new(),
             };

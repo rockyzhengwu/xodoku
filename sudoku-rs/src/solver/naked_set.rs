@@ -3,7 +3,11 @@ use crate::{
     grid::{Grid, HouseType},
     grid_constant::{block, col, row},
     solver::{SolverStrategy, step::Step, step_accumulator::StepAccumulator},
-    util::{create_permutations, digitset::DigitSet, format_candidates, format_house},
+    util::{
+        create_permutations,
+        digitset::DigitSet,
+        format_step::{format_candidates_cells, format_house},
+    },
 };
 use std::collections::HashSet;
 
@@ -80,11 +84,11 @@ impl NakedSet {
             format!(
                 "<h3>{}</h3> <p> cells {} are both in the house <b>{}</b> and have candidates <b>{}</b>.one of the cells has to be <b>{}</b>  the other see {} same time can't be {} in <b>{}</b></p>",
                 self.name(),
-                format_candidates(self.highlight_candidates.as_slice()),
+                format_candidates_cells(self.highlight_candidates.as_slice()),
                 format_house(self.house),
                 self.format_values(),
                 self.format_values(),
-                format_candidates(self.highlight_candidates.as_slice()),
+                format_candidates_cells(self.highlight_candidates.as_slice()),
                 self.format_values(),
                 format_house(self.house)
             )
@@ -92,12 +96,12 @@ impl NakedSet {
             format!(
                 "<h3>{}</h3> <p> cells {} are both in the house <b>{}</b> and <b>{}</b> have candidates <b>{}</b>.one of the cells has to be <b>{}</b> ,  the other see {} same time can't be {} in <b>{}</b> and<b>{}</b></p>",
                 self.name(),
-                format_candidates(self.highlight_candidates.as_slice()),
+                format_candidates_cells(self.highlight_candidates.as_slice()),
                 format_house(self.house),
                 format_house(self.locked_house),
                 self.format_values(),
                 self.format_values(),
-                format_candidates(self.highlight_candidates.as_slice()),
+                format_candidates_cells(self.highlight_candidates.as_slice()),
                 self.format_values(),
                 format_house(self.house),
                 format_house(self.locked_house)

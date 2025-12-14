@@ -1,13 +1,9 @@
 .player {
-  margin-top: 60px;
+  margin-top: 10px;
 }
 
-.actionButtons {
-  display: flex;
-  align-items: start;
-  justify-content: start;
-  flex-direction: column;
-  gap: 5px;
+.explainer {
+  width: 1000px;
 }
 
 .timer {
@@ -18,9 +14,11 @@
   float: right;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 768px) {
   .player {
     margin-top: 0;
+    margin-left: 0;
+    padding-left: 0;
   }
 
   .navbar {
@@ -32,6 +30,9 @@
   }
 
   .gridFooter {
+    width: 100vw;
+  }
+  .explainer {
     width: 100vw;
   }
 }

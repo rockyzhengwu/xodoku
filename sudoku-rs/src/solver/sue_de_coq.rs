@@ -3,7 +3,12 @@ use crate::{
     grid::{Grid, HouseType},
     grid_constant::get_house_cell_set,
     solver::{SolverStrategy, step::Step, step_accumulator::StepAccumulator},
-    util::digitset::DigitSet,
+    util::{
+        digitset::DigitSet,
+        format_step::{
+            format_candidates_cells, format_candidates_values, format_cells, format_house,
+        },
+    },
 };
 
 #[derive(Debug, PartialEq, Clone, Hash, Eq)]
@@ -12,12 +17,43 @@ pub struct SueDeCoq {
     pub block_candidates: Vec<Candidate>,
     pub row_col_candidates: Vec<Candidate>,
     pub other_candidates: Vec<Candidate>,
+    pub common_candidates: Vec<Candidate>,
+    pub block: u8,
+    pub row_or_cloumn: u8,
 }
 impl SueDeCoq {
     pub fn apply(&self, grid: &mut Grid) {
         for cand in self.remove_candidates.iter() {
             grid.remvoe_candidate(cand);
         }
+    }
+    pub fn name(&self) -> &str {
+        "Sue de Coq"
+    }
+    pub fn explain(&self) -> String {
+        let mut bicells = Vec::new();
+        for cand in self.block_candidates.iter() {
+            if self.common_candidates.contains(cand) {
+                continue;
+            }
+            bicells.push(cand.to_owned());
+        }
+        for cand in self.row_col_candidates.iter() {
+            if self.common_candidates.contains(cand) {
+                continue;
+            }
+            bicells.push(cand.to_owned());
+        }
+
+        format!(
+            "<h3>{}</h3><p> <b> {} </b> and <b> {} </b> intersection cells  {} has value set {} , cells {} is  bivalue  and subset of the value set format a SueDeCoq </p>",
+            self.name(),
+            format_house(self.block),
+            format_house(self.row_or_cloumn),
+            format_candidates_cells(&self.common_candidates),
+            format_candidates_values(&self.common_candidates),
+            format_candidates_cells(bicells.as_slice()),
+        )
     }
 }
 
@@ -100,32 +136,50 @@ impl SueDeCoqFinder {
                             continue;
                         }
                         let mut row_col_candidates = Vec::new();
-                        for hc in h_cells.iter() {
+                        for cell in h_cells.iter() {
+                            if !common_cells.contains(&cell) && cell != c {
+                                continue;
+                            }
                             for v in h_values.iter() {
-                                if grid.cell_has_candidate(hc, v) {
-                                    row_col_candidates.push(Candidate::new(hc, v));
+                                if grid.cell_has_candidate(cell, v) {
+                                    row_col_candidates.push(Candidate::new(cell, v));
                                 }
                             }
                         }
                         let mut block_candidates = Vec::new();
-                        for bc in b_cells.iter() {
+                        for cell in b_cells.iter() {
+                            if !common_cells.contains(&cell) && cell != bc {
+                                continue;
+                            }
                             for v in b_values.iter() {
-                                if grid.cell_has_candidate(bc, v) {
-                                    block_candidates.push(Candidate::new(bc, v));
+                                if grid.cell_has_candidate(cell, v) {
+                                    block_candidates.push(Candidate::new(cell, v));
                                 }
                             }
                         }
                         let mut other_candidates = Vec::new();
                         for c in common_cells.iter() {
                             for v in other_values_b.iter() {
-                                other_candidates.push(Candidate::new(*c, v));
+                                if grid.cell_has_candidate(*c, v) {
+                                    other_candidates.push(Candidate::new(*c, v));
+                                }
                             }
                         }
+                        let mut common_candidates = Vec::new();
+                        for c in common_cells.iter() {
+                            for cand in grid.get_cell_candidate(*c).iter() {
+                                common_candidates.push(Candidate::new(*c, cand));
+                            }
+                        }
+
                         let hint = SueDeCoq {
                             remove_candidates,
                             other_candidates,
                             row_col_candidates,
                             block_candidates,
+                            common_candidates,
+                            block: b,
+                            row_or_cloumn: h,
                         };
                         if acc.add_step(Step::SueDeCoq(hint)) {
                             return;

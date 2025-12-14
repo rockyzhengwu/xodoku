@@ -138,9 +138,9 @@ impl Step {
             Step::BugPlusOne(_) => "BugPlusOne".to_string(),
             Step::AvoidableRectangleType1(_) => "AvoidableRectangleType1".to_string(),
             Step::AvoidableRectangleType2(_) => "AvoidableRectangleType2".to_string(),
-            Step::XYWing(_) => "XYWing".to_string(),
+            Step::XYWing(_) => "XY-Wing".to_string(),
             Step::WWing(_) => "WWing".to_string(),
-            Step::SueDeCoq(_) => "SueDeCoq".to_string(),
+            Step::SueDeCoq(sd) => sd.explain(),
             Step::Chain(chain) => chain.name().to_string(),
             Step::Nothing => "Nothing".to_string(),
         }

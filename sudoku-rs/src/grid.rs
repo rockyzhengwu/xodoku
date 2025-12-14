@@ -49,7 +49,11 @@ impl Default for Grid {
 }
 
 impl Grid {
-    pub fn new_from_digit_and_pms(digits: &[u8], pms: Vec<Vec<u8>>) -> Result<Self> {
+    pub fn new_from_digit_and_pms(
+        digits: &[u8],
+        pms: Vec<Vec<u8>>,
+        is_given: Vec<bool>,
+    ) -> Result<Self> {
         let mut grid = Grid::default();
         if digits.len() != 81 || pms.len() != 81 {
             return Err(SudokuError::InvalidInput(format!(
@@ -59,11 +63,31 @@ impl Grid {
         for (i, d) in digits.iter().enumerate() {
             if *d != 0 {
                 grid.values[i] = *d;
+                grid.pential_values[i] = DigitSet::new_empty();
             }
+        }
+        for (i, g) in is_given.iter().enumerate() {
+            grid.is_given[i] = *g;
         }
         for (cell, pm) in pms.iter().enumerate() {
             if !pm.is_empty() {
                 grid.pential_values[cell] = DigitSet::new_from_values(pm);
+            }
+        }
+        for h in 0..26 {
+            let cells = get_house_cell_set(h);
+            for v in 1..9 {
+                let mut n = 0;
+                for c in cells.iter() {
+                    if grid.values[c as usize] == v {
+                        n = 0;
+                        break;
+                    }
+                    if grid.pential_values[c as usize].contains(v) {
+                        n += 1;
+                    }
+                }
+                grid.house_pential_count[h as usize][v as usize] = n;
             }
         }
 
@@ -135,8 +159,11 @@ impl Grid {
         return true;
     }
 
-    pub fn is_given(&self, cell: u8) -> bool {
+    pub fn cell_is_given(&self, cell: u8) -> bool {
         self.is_given[cell as usize]
+    }
+    pub fn is_given(&self) -> &[bool; 81] {
+        &self.is_given
     }
 
     pub fn is_solved(&self) -> bool {

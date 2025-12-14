@@ -5,7 +5,7 @@ use crate::{
     grid::{Grid, HouseType},
     grid_constant::{block, col, get_house_cell_set, row},
     solver::{SolverStrategy, StepAccumulator, step::Step},
-    util::{format_candidates, format_house},
+    util::format_step::{format_candidates_cells, format_house},
 };
 
 #[derive(Debug, Clone, PartialEq, Hash, Eq)]
@@ -60,8 +60,8 @@ impl LockedCandidate {
             format_house(self.house),
             digit,
             format_house(self.common_house),
-            format_candidates(self.highlight_candidates.as_slice()),
-            format_candidates(self.remove_candidates.as_slice()),
+            format_candidates_cells(self.highlight_candidates.as_slice()),
+            format_candidates_cells(self.remove_candidates.as_slice()),
         )
     }
 }

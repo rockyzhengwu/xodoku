@@ -177,9 +177,7 @@ impl DiscontinuousNiceLoopFinder {
                 }
             }
             (InferenceType::Weak, InferenceType::Weak) => {
-                if first.start.value() == last.end.value()
-                    || grid.get_cell_candidate(first.start.cell()).count() != 2
-                {
+                if first.start.value() == last.end.value() {
                     let remove_candidates =
                         vec![Candidate::new(first.start.cell(), first.start.value())];
                     let hint = ChainStep {
@@ -219,7 +217,20 @@ mod test {
     #[test]
     fn test_find_discontinous() {
         let s = ":0707s:7:....8.2....5....4..2...5...+9+6+2+8+37.....+321+4+6971+74+5..+83+2..+1......+6973+4+852+1+2+48+75136+9::718:";
-        let grid = Grid::new_from_hodoku_line(s).unwrap();
+        let s = r#". -------------------- . ------------------ . ----------------- .
+| 46    8       45679  | 2      49    45    | 1     67    3     |
+| 1346  123459  124569 | 34589  7     13458 | 2689  268   258   |
+| 13    12359   12579  | 3589   6     1358  | 289   4     2578  |
+: -------------------- | ------------------ | ----------------- |
+| 3468  349     4689   | 1      348   7     | 248   5     248   |
+| 7     14      148    | 6      5     2     | 3     9     48    |
+| 2     345     458    | 348    348   9     | 7     1     6     |
+: -------------------- | ------------------ | ----------------- |
+| 5     6       3      | 4789   1489  48    | 248   278   12478 |
+| 148   124     1248   | 34578  1348  34568 | 468   3678  9     |
+| 9     7       148    | 348    2     3468  | 5     368   148   |
+. -------------------- . ------------------ . ----------------- ."#;
+        let grid = Grid::new_from_matrix_str(s).unwrap();
         let solver = DiscontinuousNiceLoopFinder::default();
         let mut acc = AllStepAccumulator::default();
         solver.find_step(&grid, &mut acc);

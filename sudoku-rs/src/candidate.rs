@@ -1,4 +1,4 @@
-#[derive(Debug, Clone, PartialEq, Hash, Eq)]
+#[derive(Debug, Clone, PartialEq, Hash, Eq, Copy)]
 pub struct Candidate(u8, u8);
 
 impl Candidate {

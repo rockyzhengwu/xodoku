@@ -12,8 +12,9 @@ use sudoku_rs::{
 #[test]
 fn test_all_finder() {
     let s = "...481.5.3......9.1...7...47....3.6...65....3....9...8....3...2....57....7....8.9";
+    let s = ":0800:2:+8..+36.+9....+9.1.863.+63.+89..+59+24+6+7+3+1+5+83+8+6+9+5+17+2457+182+4+3+9+6+4+3+2+1+9658+769+8+5+37......+24+8+63+9::226:";
     let expected_solution =
-        "927481356348625197165379284781243965496518723253796418619834572832957641574162839";
+        "857362941249715863163489275924673158386951724571824396432196587698537412715248639";
     let solution: Vec<u8> = expected_solution
         .chars()
         .into_iter()
@@ -66,7 +67,7 @@ fn test_all_finder() {
         Box::new(chain::aic_type1::AicType1Finder::default()),
         Box::new(chain::aic_type2::AicType2Finder::default()),
     ];
-    let mut grid = Grid::new_from_singline_digit(s).unwrap();
+    let mut grid = Grid::new_from_hodoku_line(s).unwrap();
     loop {
         if grid.is_solved() {
             break;
