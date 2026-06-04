@@ -53,18 +53,24 @@ pnpm web:build
 
 ## Cloudflare Pages
 
-The current web app is deployed best as a static Next.js export. Sudoku solving,
-generation, and OCR run in the browser through WebAssembly, Web Workers, and
-ONNX Runtime, so no server runtime is required.
+The web app is deployed as a static Next.js export. Sudoku solving, generation,
+and OCR run in the browser through WebAssembly, Web Workers, and ONNX Runtime,
+so no server runtime is required.
 
-Use these Cloudflare Pages settings:
+Deploy through GitHub Actions and Cloudflare Pages Direct Upload. This keeps the
+Rust and `wasm-pack` build in CI instead of Cloudflare Pages' build image.
 
-- Root directory: repository root
-- Build command: `pnpm build`
-- Build output directory: `apps/web/out`
-- Environment variables: `NODE_VERSION=24.8.0`, `PNPM_VERSION=10.26.2`
+Required GitHub secrets:
 
-Cloudflare Pages must also be able to run the Rust WebAssembly build step. If
-the Pages build image does not have Rust and `wasm-pack`, either install them in
-the build command before `pnpm build`, or build in CI and upload `apps/web/out`
-to Pages.
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
+
+The workflow in `.github/workflows/deploy-cloudflare-pages.yml` builds the app
+with `pnpm build` and uploads `apps/web/out`:
+
+```sh
+wrangler pages deploy apps/web/out --project-name=xodoku --branch=main
+```
+
+Use a Cloudflare Pages Direct Upload project named `xodoku`, or change the
+workflow `--project-name` to match the existing Pages project.
