@@ -1,0 +1,177 @@
+@import "tailwindcss";
+
+:root[data-mantine-color-scheme="light"] {
+  --background-color: #ffffff;
+
+  --grid-line-color: #24292f;
+  --grid-line-color-bold: #0f172a;
+  --cell-hover-color: #14b8a6;
+
+  --digit-color: hsl(216, 72%, 53%);
+  --given-digit-color: black;
+
+  --cell-selected-bg-color: #0d948826;
+  --cell-selected-stroke-color: #0d9488;
+  --cell-selected-buddy-color: #ccfbf1;
+
+  --cell-selected-same-bgc: #ffa800;
+
+  --app-font-family: Inter, "Helvetica Neue", Arial, sans-serif;
+  --pencil-mark-color: #64748b;
+
+  --vm-background-color: #f8fafc;
+  --vm-digit-color: #0f172a;
+  --panel-background-color: #ffffff;
+  --panel-border-color: #e2e8f0;
+  --panel-muted-color: #64748b;
+  --control-background-color: #f8fafc;
+  --control-border-color: #d8e0ea;
+  --control-digit-color: #0f172a;
+
+  --digit-cell-bgc-1: rgb(255, 192, 89);
+  --digit-cell-bgc-2: rgb(177, 165, 243);
+  --digit-cell-bgc-3: rgb(247, 165, 167);
+  --digit-cell-bgc-4: rgb(134, 232, 208);
+  --digit-cell-bgc-5: rgb(134, 242, 128);
+  --digit-cell-bgc-6: rgb(215, 255, 215);
+  --digit-cell-bgc-7: rgb(51, 204, 255);
+  --digit-cell-bgc-8: rgb(247, 247, 197);
+  --digit-cell-bgc-9: rgb(247, 228, 197);
+}
+
+:root[data-mantine-color-scheme="dark"] {
+  --background-color: #111827;
+  --text-color: #9d9a9a;
+
+  --grid-line-color-bold: #cbd5e1;
+
+  --grid-line-color: #64748b;
+  --cell-hover-color: #5eead4;
+
+  --digit-color: #6c9cfd;
+  --pencil-mark-color: #6c9cfd;
+
+  --given-digit-color: #edeaea;
+
+  --cell-selected-bg-color: #545333;
+  --cell-selected-stroke-color: #ffb343;
+  --cell-selected-buddy-color: #57b9ff;
+  --cell-selected-same-bgc: #0047ab;
+
+  --vm-digit-color: hsl(216, 72%, 53%);
+  --vm-background-color: #1f2937;
+  --panel-background-color: #161b22;
+  --panel-border-color: #334155;
+  --panel-muted-color: #94a3b8;
+  --control-background-color: #111827;
+  --control-border-color: #334155;
+  --control-digit-color: #e5e7eb;
+
+  --app-font-family: Inter, "Helvetica Neue", Arial, sans-serif;
+
+  --digit-cell-bgc-1: rgb(255, 192, 89);
+  --digit-cell-bgc-2: rgb(177, 165, 243);
+  --digit-cell-bgc-3: rgb(247, 165, 167);
+  --digit-cell-bgc-4: rgb(134, 232, 208);
+  --digit-cell-bgc-5: rgb(134, 242, 128);
+  --digit-cell-bgc-6: rgb(215, 255, 215);
+  --digit-cell-bgc-7: rgb(51, 204, 255);
+  --digit-cell-bgc-8: rgb(247, 247, 197);
+  --digit-cell-bgc-9: rgb(247, 228, 197);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--app-font-family);
+}
+
+.article-content {
+  color: var(--mantine-color-text);
+  line-height: 1.75;
+}
+
+.article-content h1,
+.article-content h2,
+.article-content h3 {
+  margin-top: 1.75em;
+  margin-bottom: 0.6em;
+  line-height: 1.25;
+}
+
+.article-content h1 {
+  font-size: 2rem;
+}
+
+.article-content h2 {
+  font-size: 1.5rem;
+}
+
+.article-content h3 {
+  font-size: 1.2rem;
+}
+
+.article-content p,
+.article-content ul,
+.article-content ol {
+  margin: 0.8em 0;
+}
+
+.article-content ul,
+.article-content ol {
+  padding-left: 1.5rem;
+}
+
+.article-content ul {
+  list-style: disc;
+}
+
+.article-content ol {
+  list-style: decimal;
+}
+
+.article-content li {
+  margin: 0.35rem 0;
+}
+
+.article-content code {
+  border-radius: 0.35rem;
+  background: color-mix(in srgb, var(--mantine-color-text) 8%, transparent);
+  padding: 0.1rem 0.3rem;
+  font-size: 0.92em;
+}
+
+.article-content blockquote {
+  margin: 1rem 0;
+  border-left: 3px solid var(--mantine-primary-color-filled);
+  padding-left: 1rem;
+  color: var(--mantine-color-dimmed);
+}
+
+.article-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+}
+
+.article-content th,
+.article-content td {
+  border: 1px solid var(--mantine-color-gray-3);
+  padding: 0.55rem 0.7rem;
+  text-align: left;
+}
+
+.article-content img {
+  display: block;
+  max-width: min(100%, 42rem);
+  height: auto;
+  margin: 1.5rem auto;
+}
+
+.article-content a {
+  color: var(--mantine-primary-color-filled);
+  font-weight: 600;
+}

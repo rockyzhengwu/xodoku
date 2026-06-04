@@ -1,0 +1,18 @@
+{
+  "name": "xodoku",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.26.2",
+  "scripts": {
+    "dev": "pnpm wasm:build && pnpm --dir apps/web dev",
+    "wasm:build": "./scripts/build-wasm.sh",
+    "web:build": "pnpm --dir apps/web build",
+    "build": "pnpm wasm:build && pnpm web:build",
+    "fmt:check": "cargo fmt --all -- --check",
+    "lint:rust": "cargo clippy --workspace --all-targets --all-features -- -D warnings",
+    "lint:web": "pnpm --dir apps/web lint",
+    "lint": "pnpm lint:rust && pnpm lint:web",
+    "test": "cargo test --workspace",
+    "check": "pnpm fmt:check && pnpm lint && pnpm test && pnpm build"
+  }
+}

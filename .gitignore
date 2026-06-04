@@ -1,0 +1,30 @@
+# Rust
+**/target/
+
+# Node.js
+/node_modules/
+**/node_modules/
+**/.next/
+**/.vite/
+**/out/
+**/build/
+**/coverage/
+**/playwright-report/
+**/test-results/
+*.tsbuildinfo
+next-env.d.ts
+
+# Generated WASM bindings
+/apps/web/app/wasm/
+/apps/web/public/wasm/
+/crates/sudoku-wasm/pkg/
+
+# Local environment and tooling
+.DS_Store
+.env*
+.pnp
+.pnp.*
+.yarn/
+.vercel/
+*.pem
+*.log

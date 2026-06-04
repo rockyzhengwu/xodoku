@@ -1,0 +1,6 @@
+[workspace]
+members = ["crates/sudoku-rs", "crates/sudoku-wasm"]
+resolver = "3"
+
+[profile.release]
+debug = true
