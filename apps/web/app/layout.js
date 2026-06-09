@@ -88,10 +88,17 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head>
         <Script
-          async
           strategy="afterInteractive"
           src="https://www.googletagmanager.com/gtag/js?id=G-XLT80HH0XV"
         />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-XLT80HH0XV');
+          `}
+        </Script>
         <Script id="structured-data" type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
